@@ -20,32 +20,46 @@
 
         html { scroll-behavior: smooth; }
     </style>
+    
 </head>
 <body class="bg-slate-50 font-sans text-slate-800">
 
-    <nav class="sticky top-0 z-50 bg-[#fdfdfd] border-b border-gray-100 shadow-sm">
-        <div class="container mx-auto px-6 py-2 flex justify-between items-center">
+    <div class="container mx-auto px-6 py-2 flex justify-between items-center">
+            
             <div class="flex items-center gap-4">
                 <img src="{{ asset('images/logo.jpg') }}" alt="Logo AsoTV Guachetá" class="nav-logo">
-                
                 <div class="flex flex-col leading-none">
                     <span class="text-xl font-black text-blue-900 tracking-tighter uppercase font-serif">ASOTV</span>
                     <span class="text-lg font-bold text-yellow-600 tracking-tight uppercase">GUACHETÁ</span>
                 </div>
             </div>
             
-            <div class="hidden md:flex space-x-8 font-medium items-center">
-                <a href="#" class="text-blue-900 hover:text-blue-600 transition">Inicio</a>
-                <a href="#television" class="text-slate-600 hover:text-blue-600 transition">Televisión</a>
-                <a href="#internet" class="text-slate-600 hover:text-blue-600 transition">Internet</a>
-                
-                <a href="#contacto" class="relative inline-flex items-center justify-center bg-orange-500 text-white px-7 py-3 rounded-full hover:bg-orange-600 transition-all shadow-lg font-bold text-sm uppercase tracking-widest active:scale-95">
-                    <i class="fas fa-file-signature mr-2"></i>
-                    Solicitar Servicio
-                </a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#" class="text-blue-900 font-medium hover:text-blue-600 transition">Inicio</a>
+                <a href="#television" class="text-slate-600 font-medium hover:text-blue-600 transition">Televisión</a>
+                <a href="#internet" class="text-slate-600 font-medium hover:text-blue-600 transition">Internet</a>
+
+                <div class="h-6 w-px bg-slate-200 mx-2"></div>
+
+                <div class="flex items-center gap-3">
+                    <a href="/login" class="text-blue-900 font-bold text-sm uppercase tracking-wider hover:text-blue-700 transition px-4 py-2">
+                        <i class="fas fa-user-circle mr-2"></i>Ingresar
+                    </a>
+
+                    <a href="/register" class="bg-blue-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-blue-800 transition-all shadow-md active:scale-95 border-b-4 border-blue-950">
+                        Regístrate
+                    </a>
+
+                    <a href="#contacto" class="inline-flex items-center justify-center bg-orange-500 text-white px-6 py-2.5 rounded-full hover:bg-orange-600 transition-all shadow-lg font-black text-xs uppercase tracking-widest active:scale-95 ml-2">
+                        <i class="fas fa-file-signature mr-2"></i>Solicitar
+                    </a>
+                </div>
+            </div>
+
+            <div class="md:hidden text-blue-900 text-2xl">
+                <i class="fas fa-bars"></i>
             </div>
         </div>
-    </nav>
 
     <header class="gradient-blue text-white py-20 relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 hero-pattern"></div>
