@@ -9,25 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
+    public function up(): void
+    {
+        // Esta migración fue originalmente para crear una tabla usuarios_asotv
+        // pero se decidió usar la tabla 'users' existente. No hacer nada aquí.
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('usuarios_asotv');
+        // No reverse necesario ya que no se crea nada
     }
-    public function up(): void
-{
-    Schema::create('users', function (Blueprint $table) {
-        $table->id(); // Crea el campo 'id'
-        $table->string('name'); // Para 'Cesar Andres Contreras Suarez'
-        $table->string('email')->unique(); // Para 'andres@andres.com'
-        $table->timestamp('email_verified_at')->nullable(); // Campo NULL en tu imagen
-        $table->string('password'); // Para la contraseña encriptada
-        $table->rememberToken(); // Campo 'remember_token'
-        $table->timestamps(); // Crea 'created_at' y 'updated_at'
-    });
-}
 };
+

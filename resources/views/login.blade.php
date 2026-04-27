@@ -31,7 +31,7 @@
             <p class="text-slate-500 text-sm italic">Ingresa para gestionar tus servicios</p>
         </div>
         
-        <form action="{{ url('/dashboard') }}" method="GET" class="mt-8 space-y-5">
+        <form action="{{ url('/login') }}" method="POST" class="mt-8 space-y-5">
             @csrf 
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">

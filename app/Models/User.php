@@ -22,6 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'document',
+        'address',
+        'city',
+        'department',
+        'profile_photo', // <-- CAMBIO: Agregamos este campo para permitir guardar la foto
     ];
 
     /**
