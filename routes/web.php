@@ -16,6 +16,52 @@ Route::get('/nosotros', function () {
     return view('nosotros');
 });
 
+Route::get('/planes', function () {
+    return view('planes', ['user' => Auth::user()]);
+});
+
+// Ruta de diagnóstico del storage
+Route::get('/storage-fix', function () {
+    $storagePath = storage_path('app/public');
+    $symlink = public_path('storage');
+    
+    // Intentar crear symlink si no existe
+    if (!is_link($symlink)) {
+        try {
+            if (file_exists($symlink)) {
+                // Eliminar si es una carpeta regular
+                if (is_dir($symlink)) {
+                    rmdir($symlink);
+                } else {
+                    unlink($symlink);
+                }
+            }
+            // Crear symlink
+            symlink($storagePath, $symlink);
+            return response()->json([
+                'success' => true,
+                'message' => 'Symlink creado exitosamente',
+                'symlink_path' => $symlink,
+                'storage_path' => $storagePath
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear symlink: ' . $e->getMessage(),
+                'symlink_path' => $symlink,
+                'storage_path' => $storagePath
+            ], 500);
+        }
+    }
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Symlink ya existe',
+        'symlink_path' => $symlink,
+        'is_link' => is_link($symlink)
+    ]);
+});
+
 // Ruta de diagnóstico
 Route::get('/test-storage', function () {
     $user = Auth::user();
@@ -59,7 +105,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout']);
     
     Route::get('/dashboard', function () {
-        return view('dashboard', ['user' => Auth::user()]);
+        $user = Auth::user();
+        // Cargamos los tickets con un try-catch preventivo
+        try {
+            $tickets = \App\Models\Ticket::where('user_id', $user->id)->get();
+        } catch (\Exception $e) {
+            $tickets = collect(); // Evita que la vista falle si la tabla no existe
+        }
+        return view('dashboard', ['user' => $user, 'tickets' => $tickets]);
     });
 
     Route::get('/facturas', function () {

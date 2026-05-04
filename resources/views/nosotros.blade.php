@@ -22,8 +22,8 @@
                     <span class="text-lg font-bold text-yellow-600 uppercase tracking-tight">GUACHETÁ</span>
                 </div>
             </div>
-            <a href="/" class="text-blue-900 font-bold hover:text-blue-600 transition">
-                <i class="fas fa-arrow-left mr-2"></i> Volver al Inicio
+            <a href="/" class="bg-blue-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-800 transition-all shadow-lg flex items-center gap-2 text-base">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
             </a>
         </div>
     </nav>
@@ -69,15 +69,15 @@
 
     <footer class="bg-slate-900 text-white py-12 text-center">
         <div class="flex justify-center space-x-6 mb-6 text-xl">
-           <a href="https://www.facebook.com/AsotvGuacheta/?locale=es_LA" class="text-white hover:text-blue-500 transition-all transform hover:scale-110">
+           <a href="https://www.facebook.com/AsotvGuacheta/?locale=es_LA" target="_blank" class="text-white hover:text-blue-500 transition-all transform hover:scale-110">
         <i class="fab fa-facebook"></i>
     </a>
     
-    <a href="https://wa.me/573000000000" class="text-white hover:text-green-500 transition-all transform hover:scale-110">
+    <a href="https://wa.me/573208344845" target="_blank" class="text-white hover:text-green-500 transition-all transform hover:scale-110">
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <a href="https://www.instagram.com/asotvguacheta/" class="text-white hover:text-[#E1306C] transition-all transform hover:scale-110">
+    <a href="https://www.instagram.com/asotvguacheta/" target="_blank" class="text-white hover:text-[#E1306C] transition-all transform hover:scale-110">
         <i class="fab fa-instagram"></i>
     </a>
         </div>

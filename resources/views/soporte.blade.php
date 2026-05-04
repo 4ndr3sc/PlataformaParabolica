@@ -14,9 +14,9 @@
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans flex flex-col md:flex-row h-screen">
+<body class="bg-white text-slate-900 font-sans flex flex-col md:flex-row h-screen">
 
-    <aside class="w-64 bg-slate-950 border-r border-slate-800 hidden md:flex flex-col flex-shrink-0 h-screen fixed md:relative z-50 md:z-auto">
+    <aside class="w-64 bg-slate-50 border-r border-slate-200 hidden md:flex flex-col flex-shrink-0 h-screen fixed md:relative z-50 md:z-auto">
         <div class="p-6 flex-1">
             <div class="flex items-center gap-2 mb-10">
                 <span class="text-2xl font-black text-blue-500 tracking-tighter uppercase">ASOTV</span>
@@ -24,26 +24,26 @@
             </div>
             
             <nav class="space-y-4">
-                <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
+                <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
                 </a>
-                <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
+                <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
                 </a>
-                <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-600/50 shadow-lg shadow-blue-900/20">
+                <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
                     <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
                 </a>
-                <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
+                <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
-                <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-green-500/20 hover:text-green-400 rounded-xl transition-all border border-transparent hover:border-green-500/50">
+                <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-green-100 hover:text-green-600 rounded-xl transition-all border border-transparent hover:border-green-300">
                     <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
                 </a>
             </nav>
         </div>
 
-        <div class="p-6 border-t border-slate-800">
-            <a href="{{ url('/logout') }}" class="flex items-center gap-3 p-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all font-bold">
+        <div class="p-6 border-t border-slate-200">
+            <a href="{{ url('/logout') }}" class="flex items-center gap-3 p-3 text-red-600 hover:bg-red-100 rounded-xl transition-all font-bold">
                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </a>
         </div>
@@ -52,11 +52,11 @@
     <main class="flex-1 w-full h-full p-4 md:p-8 overflow-y-auto">
         <header class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-3xl font-extrabold text-white uppercase tracking-tight">Soporte <span class="text-yellow-500 italic">Técnico</span></h1>
-                <p class="text-slate-400">Crea y gestiona tus tickets de soporte.</p>
+                <h1 class="text-3xl font-extrabold text-slate-900 uppercase tracking-tight">Soporte <span class="text-yellow-500 italic">Técnico</span></h1>
+                <p class="text-slate-600">Crea y gestiona tus tickets de soporte.</p>
             </div>
             
-            <div class="flex items-center gap-4 bg-slate-800 p-2 pr-6 rounded-full border border-slate-700">
+            <div class="flex items-center gap-4 bg-slate-100 p-2 pr-6 rounded-full border border-slate-300">
                 <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold shadow-lg overflow-hidden relative">
                     @if(Auth::user()->profile_photo)
                         <img id="profile-image-display" 
@@ -68,7 +68,7 @@
                         </div>
                     @endif
                 </div>
-                <span class="font-bold text-sm">Estado: <span class="text-green-400">Activo</span></span>
+                <span class="font-bold text-sm">Estado: <span class="text-green-600">Activo</span></span>
             </div>
         </header>
 
@@ -79,89 +79,89 @@
         </div>
 
         @if (session('success'))
-            <div class="bg-green-500/20 border border-green-500 text-green-400 px-4 py-3 rounded-xl mb-6">
+            <div class="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-xl mb-6">
                 {{ session('success') }}
             </div>
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-slate-800 p-6 rounded-3xl border-b-4 border-blue-500 shadow-xl">
-                <p class="text-slate-400 text-sm font-bold uppercase mb-2">Tickets Abiertos</p>
-                <h3 class="text-3xl font-black text-white">{{ $tickets->where('status', 'abierto')->count() }}</h3>
-                <p class="text-blue-400 text-xs mt-2 font-bold uppercase">Sin resolver</p>
+            <div class="bg-white p-6 rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
+                <p class="text-slate-600 text-sm font-bold uppercase mb-2">Tickets Abiertos</p>
+                <h3 class="text-3xl font-black text-slate-900">{{ $tickets->where('status', 'abierto')->count() }}</h3>
+                <p class="text-blue-600 text-xs mt-2 font-bold uppercase">Sin resolver</p>
             </div>
-            <div class="bg-slate-800 p-6 rounded-3xl border-b-4 border-yellow-500 shadow-xl">
-                <p class="text-slate-400 text-sm font-bold uppercase mb-2">En Progreso</p>
-                <h3 class="text-3xl font-black text-white">{{ $tickets->where('status', 'en_progreso')->count() }}</h3>
-                <p class="text-yellow-400 text-xs mt-2 font-bold uppercase">Siendo atendidos</p>
+            <div class="bg-white p-6 rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200">
+                <p class="text-slate-600 text-sm font-bold uppercase mb-2">En Progreso</p>
+                <h3 class="text-3xl font-black text-slate-900">{{ $tickets->where('status', 'en_progreso')->count() }}</h3>
+                <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">Siendo atendidos</p>
             </div>
-            <div class="bg-slate-800 p-6 rounded-3xl border-b-4 border-green-500 shadow-xl">
-                <p class="text-slate-400 text-sm font-bold uppercase mb-2">Resueltos</p>
-                <h3 class="text-3xl font-black text-white">{{ $tickets->where('status', 'resuelto')->count() }}</h3>
-                <p class="text-green-400 text-xs mt-2 font-bold uppercase">Completados</p>
+            <div class="bg-white p-6 rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200">
+                <p class="text-slate-600 text-sm font-bold uppercase mb-2">Resueltos</p>
+                <h3 class="text-3xl font-black text-slate-900">{{ $tickets->where('status', 'resuelto')->count() }}</h3>
+                <p class="text-green-600 text-xs mt-2 font-bold uppercase">Completados</p>
             </div>
         </div>
 
-        <div class="bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-700">
-            <div class="p-6 border-b border-slate-700">
-                <h2 class="text-xl font-bold text-white uppercase">Mis Tickets</h2>
+        <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-slate-200">
+            <div class="p-6 border-b border-slate-200">
+                <h2 class="text-xl font-bold text-slate-900 uppercase">Mis Tickets</h2>
             </div>
             
             @if($tickets && $tickets->count() > 0)
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead class="bg-slate-900">
+                        <thead class="bg-slate-100">
                             <tr>
-                                <th class="px-6 py-4 text-left text-slate-400 font-bold uppercase text-xs">Número</th>
-                                <th class="px-6 py-4 text-left text-slate-400 font-bold uppercase text-xs">Tipo</th>
-                                <th class="px-6 py-4 text-left text-slate-400 font-bold uppercase text-xs">Asunto</th>
-                                <th class="px-6 py-4 text-left text-slate-400 font-bold uppercase text-xs">Estado</th>
-                                <th class="px-6 py-4 text-left text-slate-400 font-bold uppercase text-xs">Prioridad</th>
-                                <th class="px-6 py-4 text-left text-slate-400 font-bold uppercase text-xs">Fecha</th>
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Número</th>
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Tipo</th>
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Asunto</th>
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Estado</th>
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Prioridad</th>
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Fecha</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-700">
+                        <tbody class="divide-y divide-slate-200">
                             @foreach($tickets as $ticket)
-                                <tr class="hover:bg-slate-700/50 transition">
-                                    <td class="px-6 py-4 text-white font-bold">{{ $ticket->ticket_number }}</td>
-                                    <td class="px-6 py-4 text-slate-300 uppercase text-xs">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="px-6 py-4 text-slate-900 font-bold">{{ $ticket->ticket_number }}</td>
+                                    <td class="px-6 py-4 text-slate-600 uppercase text-xs">
                                         @switch($ticket->type)
                                             @case('peticion')
-                                                <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded font-bold">Petición</span>
+                                                <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">Petición</span>
                                                 @break
                                             @case('queja')
-                                                <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded font-bold">Queja</span>
+                                                <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded font-bold">Queja</span>
                                                 @break
                                             @case('reclamo')
-                                                <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded font-bold">Reclamo</span>
+                                                <span class="bg-red-100 text-red-600 px-2 py-1 rounded font-bold">Reclamo</span>
                                                 @break
                                             @default
-                                                <span class="bg-slate-500/20 text-slate-300 px-2 py-1 rounded font-bold">General</span>
+                                                <span class="bg-slate-200 text-slate-600 px-2 py-1 rounded font-bold">General</span>
                                         @endswitch
                                     </td>
-                                    <td class="px-6 py-4 text-slate-300">{{ $ticket->subject }}</td>
+                                    <td class="px-6 py-4 text-slate-600">{{ $ticket->subject }}</td>
                                     <td class="px-6 py-4">
                                         @php
                                             $statusClasses = [
-                                                'abierto' => 'bg-blue-500/20 text-blue-400',
-                                                'en_progreso' => 'bg-yellow-500/20 text-yellow-400',
-                                                'resuelto' => 'bg-green-500/20 text-green-400',
-                                                'cerrado' => 'bg-slate-500/20 text-slate-400'
+                                                'abierto' => 'bg-blue-100 text-blue-600',
+                                                'en_progreso' => 'bg-yellow-100 text-yellow-600',
+                                                'resuelto' => 'bg-green-100 text-green-600',
+                                                'cerrado' => 'bg-slate-200 text-slate-600'
                                             ];
                                         @endphp
-                                        <span class="{{ $statusClasses[$ticket->status] ?? 'bg-slate-500/20 text-slate-400' }} px-2 py-1 rounded text-xs font-bold uppercase">
+                                        <span class="{{ $statusClasses[$ticket->status] ?? 'bg-slate-200 text-slate-600' }} px-2 py-1 rounded text-xs font-bold uppercase">
                                             {{ str_replace('_', ' ', $ticket->status) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
                                         @php
-                                            $priorityColors = ['baja' => 'text-green-400', 'media' => 'text-yellow-400', 'alta' => 'text-red-400'];
+                                            $priorityColors = ['baja' => 'text-green-600', 'media' => 'text-yellow-600', 'alta' => 'text-red-600'];
                                         @endphp
-                                        <span class="{{ $priorityColors[$ticket->priority] ?? 'text-slate-400' }} font-bold uppercase text-xs">
+                                        <span class="{{ $priorityColors[$ticket->priority] ?? 'text-slate-600' }} font-bold uppercase text-xs">
                                             {{ $ticket->priority }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-slate-300 text-sm">
+                                    <td class="px-6 py-4 text-slate-600 text-sm">
                                         {{ $ticket->created_at ? $ticket->created_at->format('d/m/Y') : 'N/A' }}
                                     </td>
                                 </tr>
@@ -171,35 +171,35 @@
                 </div>
             @else
                 <div class="p-6 text-center py-12">
-                    <i class="fas fa-inbox text-slate-600 text-4xl mb-4 block"></i>
-                    <p class="text-slate-400">No tienes tickets creados en este momento.</p>
+                    <i class="fas fa-inbox text-slate-300 text-4xl mb-4 block"></i>
+                    <p class="text-slate-600">No tienes tickets creados en este momento.</p>
                     <p class="text-slate-500 text-sm mt-2">Si tienes algún problema, crea un nuevo ticket para que nuestro equipo pueda ayudarte.</p>
                 </div>
             @endif
         </div>
 
-        <div class="mt-10 bg-gradient-to-r from-emerald-900 to-slate-800 p-8 rounded-3xl shadow-2xl">
+        <div class="mt-10 bg-gradient-to-r from-green-500 to-green-400 p-8 rounded-3xl shadow-2xl">
             <h3 class="text-xl font-black text-white uppercase mb-4">¿Necesitas Ayuda?</h3>
-            <p class="text-slate-200 mb-6">Nuestro equipo de soporte está disponible para atender tus requerimientos técnicos en Guachetá.</p>
+            <p class="text-white mb-6">Nuestro equipo de soporte está disponible para atender tus requerimientos técnicos en Guachetá.</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="flex items-center gap-3">
-                    <i class="fas fa-phone text-yellow-500 text-xl"></i>
+                    <i class="fas fa-phone text-yellow-300 text-xl"></i>
                     <div>
-                        <p class="text-slate-400 text-xs uppercase">Teléfono</p>
-                        <p class="text-white font-bold">+57 (8) 7331234</p>
+                        <p class="text-white text-xs uppercase">Teléfono</p>
+                        <p class="text-white font-bold">+57 3208344845</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <i class="fas fa-envelope text-yellow-500 text-xl"></i>
+                    <i class="fas fa-envelope text-yellow-300 text-xl"></i>
                     <div>
-                        <p class="text-slate-400 text-xs uppercase">Email</p>
+                        <p class="text-white text-xs uppercase">Email</p>
                         <p class="text-white font-bold">soporte@asotv.com</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <i class="fas fa-clock text-yellow-500 text-xl"></i>
+                    <i class="fas fa-clock text-yellow-300 text-xl"></i>
                     <div>
-                        <p class="text-slate-400 text-xs uppercase">Horario</p>
+                        <p class="text-white text-xs uppercase">Horario</p>
                         <p class="text-white font-bold">Lun - Vie | 8AM - 5PM</p>
                     </div>
                 </div>

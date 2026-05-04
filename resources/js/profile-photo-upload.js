@@ -60,6 +60,8 @@ class ProfilePhotoUpload {
     }
 
     handlePhotoSelect(event) {
+        // [CARGA DE IMAGEN] Obtener el archivo de imagen seleccionado por el usuario desde el input file
+        // Este archivo reemplazará la foto de perfil por defecto (inicial) en el dashboard
         const file = event.target.files[0];
         if (!file) return;
 
@@ -77,8 +79,9 @@ class ProfilePhotoUpload {
         // Mostrar indicador de carga
         this.showNotification('Subiendo foto...', 'loading');
 
-        // Preparar FormData
+        // Preparar FormData con la imagen seleccionada para enviarla al servidor
         const formData = new FormData();
+        // [IMAGEN A ENVIAR] Aquí se añade el archivo de imagen elegido por el usuario al formulario
         formData.append('photo', file);
 
         // Hacer upload
@@ -96,13 +99,17 @@ class ProfilePhotoUpload {
         })
         .then(data => {
             if (data.success) {
+                // [URL DE LA FOTO CARGADA] Obtener la URL de la imagen subida desde la respuesta del servidor
+                // Esta URL es la que se usará para reemplazar la foto de perfil en el dashboard y otras vistas
                 const photoUrl = data.photo_url + '?t=' + new Date().getTime();
                 
                 // Guardar en localStorage para sincronizar entre tabs/sesiones
                 localStorage.setItem('profilePhotoUrl', photoUrl);
                 localStorage.setItem('profilePhotoTimestamp', new Date().getTime());
                 
-                // Actualizar todos los avatares en la página
+                // [ACTUALIZACIÓN DE AVATARES] Actualizar todos los avatares en la página con la nueva foto
+                // Esto incluye: dashboard (header superior derecho), perfil, y cualquier otro lugar donde aparezca la foto de perfil
+                // El elemento principal actualizado es: #profile-image-display en el header del dashboard
                 this.updateAllAvatars(photoUrl);
                 
                 this.showNotification('¡Foto actualizada exitosamente!', 'success');

@@ -19,12 +19,22 @@
         }
 
         html { scroll-behavior: smooth; }
+        
+        /* Navbar pegajoso */
+        .navbar-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: #fdfdfd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
     </style>
     
 </head>
 <body class="bg-slate-50 font-sans text-slate-800">
 
-    <div class="container mx-auto px-6 py-2 flex justify-between items-center">
+    <div class="navbar-sticky">
+        <div class="container mx-auto px-6 py-2 flex justify-between items-center">
             
             <div class="flex items-center gap-4">
                 <img src="{{ asset('images/logo.jpg') }}" alt="Logo AsoTV Guachetá" class="nav-logo">
@@ -50,7 +60,7 @@
                         Regístrate
                     </a>
 
-                    <a href="#contacto" class="inline-flex items-center justify-center bg-orange-500 text-white px-6 py-2.5 rounded-full hover:bg-orange-600 transition-all shadow-lg font-black text-xs uppercase tracking-widest active:scale-95 ml-2">
+                    <a href="/planes" class="inline-flex items-center justify-center bg-orange-500 text-white px-6 py-2.5 rounded-full hover:bg-orange-600 transition-all shadow-lg font-black text-xs uppercase tracking-widest active:scale-95 ml-2">
                         <i class="fas fa-file-signature mr-2"></i>Solicitar
                     </a>
                 </div>
@@ -60,6 +70,7 @@
                 <i class="fas fa-bars"></i>
             </div>
         </div>
+    </div>
 
     <header class="gradient-blue text-white py-20 relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 hero-pattern"></div>
@@ -93,7 +104,7 @@
             <div class="bg-white p-10 rounded-3xl shadow-lg border-b-4 border-blue-600 hover:scale-105 transition-transform">
                 <div class="text-blue-700 text-4xl mb-6"><i class="fas fa-tv"></i></div>
                 <h3 class="text-2xl font-bold mb-4 text-blue-900">TV Digital</h3>
-                <p class="text-slate-600 italic">Disfruta de más de 80 canales con señal nítida y contenido para toda la familia.</p>
+                <p class="text-slate-600 italic">Disfruta de más de 60 canales con señal nítida y contenido para toda la familia.</p>
             </div>
 
             <div class="bg-white p-10 rounded-3xl shadow-lg border-b-4 border-yellow-500 hover:scale-105 transition-transform">
@@ -116,7 +127,7 @@
                 <div class="md:w-1/2 relative">
                 <img src="{{ asset('images/canales.webp') }}" alt="Canales" class="rounded-3xl shadow-2xl relative z-10 border-b-8 border-blue-900">
                     <div class="absolute -bottom-6 -right-6 bg-yellow-500 text-blue-900 p-6 rounded-2xl shadow-xl z-20 font-bold">
-                        <p class="text-3xl">+80</p>
+                        <p class="text-3xl">+60</p>
                         <p class="text-xs uppercase tracking-tighter">Canales Digitales</p>
                     </div>
                 </div>
@@ -194,15 +205,15 @@
             </div>
             <p class="text-blue-200 mb-8 max-w-lg mx-auto italic">"Uniendo a Guachetá a través de la comunicación y la tecnología."</p>
             <div class="flex justify-center space-x-8 text-2xl mb-8">
-    <a href="https://www.facebook.com/AsotvGuacheta/?locale=es_LA" class="text-white hover:text-blue-500 transition-all transform hover:scale-110">
+    <a href="https://www.facebook.com/AsotvGuacheta/?locale=es_LA" target="_blank" class="text-white hover:text-blue-500 transition-all transform hover:scale-110">
         <i class="fab fa-facebook"></i>
     </a>
     
-    <a href="https://wa.me/573000000000" class="text-white hover:text-green-500 transition-all transform hover:scale-110">
+    <a href="https://wa.me/573208344845" target="_blank" class="text-white hover:text-green-500 transition-all transform hover:scale-110">
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <a href="https://www.instagram.com/asotvguacheta/" class="text-white hover:text-[#E1306C] transition-all transform hover:scale-110">
+    <a href="https://www.instagram.com/asotvguacheta/" target="_blank" class="text-white hover:text-[#E1306C] transition-all transform hover:scale-110">
         <i class="fab fa-instagram"></i>
     </a>
 </div>
