@@ -62,21 +62,45 @@
             </div>
             
             <nav class="space-y-4">
-                <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
-                    <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
-                </a>
-                <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
-                    <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
-                </a>
+                @if(Auth::check() && Auth::user()->role === 'administrador')
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
+                        <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
+                    </a>
+                @else
+                    <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
+                        <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
+                    </a>
+                @endif
+
+                @if(Auth::user()->role === 'cliente')
+                    <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
+                    </a>
+                @endif
+
                 <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
                 </a>
+
                 <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
-                <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-green-100 hover:text-green-600 rounded-xl transition-all border border-transparent hover:border-green-300">
-                    <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
-                </a>
+
+                @if(Auth::user()->role === 'cliente')
+                    @if(!(Auth::check() && Auth::user()->role === 'administrador'))
+                        <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-green-100 hover:text-green-600 rounded-xl transition-all border border-transparent hover:border-green-300">
+                            <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
+                        </a>
+                    @endif
+                @endif
+                
+                @if(Auth::user()->role === 'administrador')
+                    <div class="border-t border-slate-300 pt-4 mt-4">
+                        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-red-600 font-bold hover:bg-red-100 rounded-xl transition-all border-2 border-red-300">
+                            <i class="fas fa-lock-open"></i> <span>Panel Admin</span>
+                        </a>
+                    </div>
+                @endif
             </nav>
         </div>
 
@@ -115,23 +139,63 @@
             </div>
         </header>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
-            <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
-                <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Plan Actual</p>
-                <h3 class="text-xl md:text-2xl font-black text-slate-900">100MB FIBRA</h3>
-                <p class="text-blue-600 text-xs mt-2 font-bold uppercase tracking-widest italic">Velocidad Simétrica</p>
+        @if(Auth::check() && Auth::user()->role === 'administrador')
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-8 md:mb-10">
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Total Usuarios</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $users->count() ?? 0 }}</h3>
+                    <p class="text-blue-600 text-xs mt-2 font-bold uppercase tracking-widest italic">Registros</p>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-red-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Administradores</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $users->where('role', 'administrador')->count() ?? 0 }}</h3>
+                    <p class="text-red-600 text-xs mt-2 font-bold uppercase">Con acceso</p>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-400 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Técnicos</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $users->where('role', 'tecnico')->count() ?? 0 }}</h3>
+                    <p class="text-blue-600 text-xs mt-2 font-bold uppercase">Asignados</p>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Tickets sin resolver</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $unresolvedTickets ?? 0 }}</h3>
+                    <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">Por atención</p>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Tickets Abiertos</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $openTickets ?? 0 }}</h3>
+                    <p class="text-green-600 text-xs mt-2 font-bold uppercase">En curso</p>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-gray-400 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Tickets Totales</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $totalTickets ?? 0 }}</h3>
+                    <p class="text-gray-500 text-xs mt-2 font-bold uppercase">Registros</p>
+                </div>
             </div>
-            <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200">
-                <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Próximo Pago</p>
-                <h3 class="text-xl md:text-2xl font-black text-slate-900">$ 47.900</h3>
-                <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">Vence en 27 días</p>
+        @else
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Plan Actual</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">100MB FIBRA</h3>
+                    <p class="text-blue-600 text-xs mt-2 font-bold uppercase tracking-widest italic">Velocidad Simétrica</p>
+                </div>
+                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Próximo Pago</p>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">$ 47.900</h3>
+                    <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">Vence en 27 días</p>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200">
+                    <p class="text-slate-600 text-sm font-bold uppercase mb-2">Tickets Abiertos</p>
+                    <h3 class="text-2xl font-black text-slate-900">{{ $tickets->where('status', 'abierto')->count() }}</h3>
+                    <p class="text-green-600 text-xs mt-2 font-bold uppercase">Sin reportes pendientes</p>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200">
-                <p class="text-slate-600 text-sm font-bold uppercase mb-2">Tickets Abiertos</p>
-                <h3 class="text-2xl font-black text-slate-900">{{ $tickets->where('status', 'abierto')->count() }}</h3>
-                <p class="text-green-600 text-xs mt-2 font-bold uppercase">Sin reportes pendientes</p>
-            </div>
-        </div>
+        @endif
 
         <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-slate-200 mb-10">
             <div class="p-6 border-b border-slate-200">

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 
 // --- Rutas públicas ---
@@ -108,15 +109,138 @@ Route::middleware(['auth'])->group(function () {
         $user = Auth::user();
         // Cargamos los tickets con un try-catch preventivo
         try {
+            if ($user && $user->role === 'administrador') {
+                $users = \App\Models\User::all();
+                $totalTickets = \App\Models\Ticket::count();
+                $openTickets = \App\Models\Ticket::where('status', 'abierto')->count();
+                $unresolvedTickets = \App\Models\Ticket::whereNotIn('status', ['resuelto', 'cerrado'])->count();
+                // Mostrar los tickets más recientes en el dashboard admin
+                $tickets = \App\Models\Ticket::latest()->take(10)->get();
+                return view('dashboard', compact('user', 'tickets', 'users', 'totalTickets', 'openTickets', 'unresolvedTickets'));
+            }
+
             $tickets = \App\Models\Ticket::where('user_id', $user->id)->get();
         } catch (\Exception $e) {
             $tickets = collect(); // Evita que la vista falle si la tabla no existe
+            $users = collect();
+            $totalTickets = 0;
+            $openTickets = 0;
+            $unresolvedTickets = 0;
         }
-        return view('dashboard', ['user' => $user, 'tickets' => $tickets]);
+
+        return view('dashboard', ['user' => $user, 'tickets' => $tickets, 'users' => $users ?? null, 'totalTickets' => $totalTickets ?? 0, 'openTickets' => $openTickets ?? 0, 'unresolvedTickets' => $unresolvedTickets ?? 0]);
     });
 
     Route::get('/facturas', function () {
-        return view('facturas', ['user' => Auth::user()]);
+        $user = Auth::user();
+
+        // Métricas para administradores sobre pagos
+        $paid_this_month = 0;
+        $unpaid_this_month = 0;
+        $unpaid_previous_months = 0;
+        $total_users = 0;
+
+        // Listas por defecto (vacías) para evitar errores en la vista cuando no existen
+        $paid_users_this_month = collect();
+        $unpaid_users_this_month = collect();
+        $unpaid_users_previous_months = collect();
+        $all_users = collect();
+
+        if ($user && $user->role === 'administrador') {
+            try {
+                $total_users = \App\Models\User::count();
+
+                // Usamos consultas directas a la tabla 'invoices' si existe
+                if (\Schema::hasTable('invoices')) {
+                    $now = \Carbon\now();
+                    $month = $now->month;
+                    $year = $now->year;
+
+                    // Usuarios que tienen al menos una factura pagada este mes
+                    $paid_this_month = \DB::table('invoices')
+                        ->whereMonth('date', $month)
+                        ->whereYear('date', $year)
+                        ->where('status', 'paid')
+                        ->distinct('user_id')
+                        ->count('user_id');
+
+                    // Usuarios con factura pendiente este mes
+                    $unpaid_this_month = \DB::table('invoices')
+                        ->whereMonth('date', $month)
+                        ->whereYear('date', $year)
+                        ->whereIn('status', ['pending', 'unpaid'])
+                        ->distinct('user_id')
+                        ->count('user_id');
+
+                    // Usuarios que no han pagado en meses anteriores (tienen facturas pendientes en meses previos)
+                    $unpaid_previous_months = \DB::table('invoices')
+                        ->where(function ($q) use ($month, $year) {
+                            $q->whereYear('date', '<', $year)
+                              ->orWhere(function($q2) use ($month, $year) {
+                                  $q2->whereYear('date', $year)->whereMonth('date', '<', $month);
+                              });
+                        })
+                        ->whereIn('status', ['pending', 'unpaid'])
+                        ->distinct('user_id')
+                        ->count('user_id');
+
+                    // Además, obtener listados de usuarios por categoría (limitados)
+                    $paid_users_this_month = collect();
+                    $unpaid_users_this_month = collect();
+                    $unpaid_users_previous_months = collect();
+
+                    $limit = 1000;
+
+                    $paid_users_this_month = \DB::table('invoices')
+                        ->join('users', 'invoices.user_id', '=', 'users.id')
+                        ->whereMonth('invoices.date', $month)
+                        ->whereYear('invoices.date', $year)
+                        ->where('invoices.status', 'paid')
+                        ->select('users.id', 'users.name', 'users.email', 'users.phone')
+                        ->distinct('users.id')
+                        ->limit($limit)
+                        ->get();
+
+                    $unpaid_users_this_month = \DB::table('invoices')
+                        ->join('users', 'invoices.user_id', '=', 'users.id')
+                        ->whereMonth('invoices.date', $month)
+                        ->whereYear('invoices.date', $year)
+                        ->whereIn('invoices.status', ['pending', 'unpaid'])
+                        ->select('users.id', 'users.name', 'users.email', 'users.phone')
+                        ->distinct('users.id')
+                        ->limit($limit)
+                        ->get();
+
+                    $unpaid_users_previous_months = \DB::table('invoices')
+                        ->join('users', 'invoices.user_id', '=', 'users.id')
+                        ->where(function ($q) use ($month, $year) {
+                            $q->whereYear('invoices.date', '<', $year)
+                              ->orWhere(function($q2) use ($month, $year) {
+                                  $q2->whereYear('invoices.date', $year)->whereMonth('invoices.date', '<', $month);
+                              });
+                        })
+                        ->whereIn('invoices.status', ['pending', 'unpaid'])
+                        ->select('users.id', 'users.name', 'users.email', 'users.phone')
+                        ->distinct('users.id')
+                        ->limit($limit)
+                        ->get();
+
+                    // Lista completa (limitada) de usuarios
+                    $all_users = \App\Models\User::select('id','name','email','phone')->limit($limit)->get();
+                }
+            } catch (\Exception $e) {
+                // Si no existe la tabla o hay error, dejamos los valores en 0
+                $paid_this_month = 0;
+                $unpaid_this_month = 0;
+                $unpaid_previous_months = 0;
+                $paid_users_this_month = collect();
+                $unpaid_users_this_month = collect();
+                $unpaid_users_previous_months = collect();
+                $all_users = collect();
+            }
+        }
+
+        return view('facturas', compact('user', 'paid_this_month', 'unpaid_this_month', 'unpaid_previous_months', 'total_users', 'paid_users_this_month', 'unpaid_users_this_month', 'unpaid_users_previous_months', 'all_users'));
     });
 
     // Ruta de Soporte (Única y protegida)
@@ -143,4 +267,12 @@ Route::middleware(['auth'])->group(function () {
     // Gestión de Tickets
     Route::get('/soporte/crear', [TicketController::class, 'showCreateForm']);
     Route::post('/ticket/crear', [TicketController::class, 'store']);
+
+    // --- Rutas de Administración (Solo Administradores) ---
+    Route::middleware('role:administrador')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/admin/users/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit-user');
+        Route::post('/admin/users/{id}/update-role', [AdminController::class, 'updateRole'])->name('admin.update-role');
+        Route::delete('/admin/users/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
+    });
 });

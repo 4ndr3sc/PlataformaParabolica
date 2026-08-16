@@ -36,9 +36,18 @@
                 <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
-                <a href="{{ url('/aplicacion') }}" class="flex items-center gap-3 p-3 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-600/50 shadow-lg shadow-blue-900/20">
-                    <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
-                </a>
+                @if(!(Auth::check() && Auth::user()->role === 'administrador'))
+                    <a href="{{ url('/aplicacion') }}" class="flex items-center gap-3 p-3 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-600/50 shadow-lg shadow-blue-900/20">
+                        <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
+                    </a>
+                @endif
+                @if(Auth::check() && Auth::user()->role === 'administrador')
+                    <div class="border-t border-slate-800 pt-4 mt-4">
+                        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-red-400 font-bold hover:bg-red-500/10 rounded-xl transition-all border-2 border-red-700">
+                            <i class="fas fa-lock-open"></i> <span>Panel Admin</span>
+                        </a>
+                    </div>
+                @endif
             </nav>
         </div>
 

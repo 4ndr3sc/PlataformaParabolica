@@ -27,7 +27,8 @@ class User extends Authenticatable
         'address',
         'city',
         'department',
-        'profile_photo', // <-- CAMBIO: Agregamos este campo para permitir guardar la foto
+        'profile_photo',
+        'role',
     ];
 
     /**
