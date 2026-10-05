@@ -6,6 +6,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ChatbotController;
 use Illuminate\Support\Facades\Auth;
 
 // --- Rutas públicas ---
@@ -20,6 +21,10 @@ Route::get('/nosotros', function () {
 Route::get('/planes', function () {
     return view('planes', ['user' => Auth::user()]);
 });
+
+Route::post('/chatbot/reply', [ChatbotController::class, 'reply'])
+    ->middleware('throttle:20,1')
+    ->name('chatbot.reply');
 
 // Ruta de diagnóstico del storage
 Route::get('/storage-fix', function () {
@@ -107,6 +112,11 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/dashboard', function () {
         $user = Auth::user();
+
+        if ($user && $user->role === 'tecnico') {
+            return redirect('/tecnico/asignaciones');
+        }
+
         // Cargamos los tickets con un try-catch preventivo
         try {
             if ($user && $user->role === 'administrador') {
@@ -259,6 +269,65 @@ Route::middleware(['auth'])->group(function () {
         return view('perfil', ['user' => Auth::user()]);
     });
 
+    Route::middleware('role:tecnico')->group(function () {
+        Route::get('/tecnico/asignaciones', function () {
+            $tickets = \App\Models\Ticket::where('technician_id', Auth::id())->latest()->take(10)->get();
+            return view('tecnico.operaciones', [
+                'user' => Auth::user(),
+                'section' => 'asignaciones',
+                'title' => 'Asignaciones',
+                'tickets' => $tickets,
+                'metrics' => [
+                    ['label' => 'Asignados', 'value' => $tickets->count(), 'color' => 'blue'],
+                    ['label' => 'Abiertos', 'value' => $tickets->where('status', 'abierto')->count(), 'color' => 'yellow'],
+                    ['label' => 'Resueltos', 'value' => $tickets->where('status', 'resuelto')->count(), 'color' => 'green'],
+                ],
+            ]);
+        });
+
+        Route::get('/tecnico/estados', function () {
+            $tickets = \App\Models\Ticket::where('technician_id', Auth::id())->latest()->take(10)->get();
+            return view('tecnico.operaciones', [
+                'user' => Auth::user(),
+                'section' => 'estados',
+                'title' => 'Actualizar estados',
+                'tickets' => $tickets,
+                'metrics' => [
+                    ['label' => 'En revisión', 'value' => $tickets->where('status', 'en_progreso')->count(), 'color' => 'yellow'],
+                    ['label' => 'Abiertos', 'value' => $tickets->where('status', 'abierto')->count(), 'color' => 'blue'],
+                    ['label' => 'Cerrados', 'value' => $tickets->where('status', 'cerrado')->count(), 'color' => 'slate'],
+                ],
+            ]);
+        });
+
+        Route::post('/tecnico/tickets/{id}/estado', function ($id, \Illuminate\Http\Request $request) {
+            $request->validate([
+                'status' => 'required|in:abierto,en_progreso,resuelto,cerrado',
+            ]);
+
+            $ticket = \App\Models\Ticket::where('id', $id)->where('technician_id', Auth::id())->firstOrFail();
+            $ticket->update(['status' => $request->status]);
+
+            $redirectTo = str_contains(url()->previous(), '/tecnico/estados') ? '/tecnico/estados' : '/tecnico/asignaciones';
+            return redirect($redirectTo)->with('success', 'Estado del ticket actualizado correctamente.');
+        });
+
+        Route::get('/tecnico/historial', function () {
+            $tickets = \App\Models\Ticket::where('technician_id', Auth::id())->latest()->take(12)->get();
+            return view('tecnico.operaciones', [
+                'user' => Auth::user(),
+                'section' => 'historial',
+                'title' => 'Historial de soporte',
+                'tickets' => $tickets,
+                'metrics' => [
+                    ['label' => 'Total', 'value' => $tickets->count(), 'color' => 'blue'],
+                    ['label' => 'Resueltos', 'value' => $tickets->where('status', 'resuelto')->count(), 'color' => 'green'],
+                    ['label' => 'Pendientes', 'value' => $tickets->whereNotIn('status', ['resuelto', 'cerrado'])->count(), 'color' => 'yellow'],
+                ],
+            ]);
+        });
+    });
+
     // Acciones de Perfil
     Route::post('/perfil/update', [AuthController::class, 'updateProfile']);
     Route::post('/perfil/password', [AuthController::class, 'updatePassword']);
@@ -271,8 +340,16 @@ Route::middleware(['auth'])->group(function () {
     // --- Rutas de Administración (Solo Administradores) ---
     Route::middleware('role:administrador')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('/admin/users', [AdminController::class, 'store'])->name('admin.store-user');
         Route::get('/admin/users/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit-user');
         Route::post('/admin/users/{id}/update-role', [AdminController::class, 'updateRole'])->name('admin.update-role');
+        Route::post('/admin/users/{id}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admin.toggle-status');
+        Route::get('/admin/tickets/asignar', [AdminController::class, 'ticketAssignmentPage'])->name('admin.ticket-assignment');
+        Route::get('/admin/validacion', [AdminController::class, 'validationOverview'])->name('admin.validacion');
+        Route::get('/admin/reportes', [AdminController::class, 'reports'])->name('admin.reportes');
+        Route::get('/admin/reportes/exportar', [AdminController::class, 'exportReports'])->name('admin.reportes.export');
+        Route::post('/admin/tickets/{ticketId}/assign', [AdminController::class, 'assignTicketToTechnician'])->name('admin.assign-ticket');
+        Route::patch('/admin/tickets/{ticketId}/status', [AdminController::class, 'updateTicketStatus'])->name('admin.update-ticket-status');
         Route::delete('/admin/users/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
     });
 });

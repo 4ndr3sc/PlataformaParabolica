@@ -319,5 +319,6 @@
 
     <script src="{{ asset('js/profile-photo-upload.js') }}"></script>
 
+    @include('components.public-chatbot')
 </body>
 </html>

@@ -15,5 +15,6 @@
 </head>
 <body class="bg-gray-50">
     @yield('content')
+    @include('components.public-chatbot')
 </body>
 </html>

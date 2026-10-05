@@ -133,6 +133,22 @@
                     </select>
                 </div>
 
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Estado de la cuenta</label>
+                    <div class="p-3 rounded-lg border {{ $user->is_active ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800' }}">
+                        <div class="flex items-center justify-between gap-4">
+                            <span class="font-medium">{{ $user->is_active ? 'Cuenta activa' : 'Cuenta desactivada' }}</span>
+                            <form action="{{ route('admin.toggle-status', $user->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg {{ $user->is_active ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white' }} transition text-sm font-semibold">
+                                    <i class="fas {{ $user->is_active ? 'fa-user-slash' : 'fa-user-check' }}"></i>
+                                    {{ $user->is_active ? 'Desactivar' : 'Activar' }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Role Descriptions -->
                 <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6">
                     <h3 class="font-semibold text-blue-900 mb-3 flex items-center gap-2">
@@ -142,6 +158,10 @@
                         <li>
                             <span class="font-semibold"><i class="fas fa-user"></i> Cliente:</span> 
                             Acceso básico a la plataforma, ver sus servicios y soporte
+                        </li>
+                        <li>
+                            <span class="font-semibold"><i class="fas fa-handshake"></i> Aliado:</span> 
+                            Socio comercial o colaborador externo con acceso a información específica
                         </li>
                         <li>
                             <span class="font-semibold"><i class="fas fa-tools"></i> Técnico:</span> 

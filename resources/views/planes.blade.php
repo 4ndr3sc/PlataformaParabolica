@@ -211,5 +211,7 @@
         <p class="text-slate-500 text-sm italic uppercase tracking-widest">&copy; 2026 AsoTV Guachetá</p>
     </footer>
 
+    @include('components.public-chatbot')
+
 </body>
 </html>

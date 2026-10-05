@@ -223,5 +223,7 @@
         </div>
     </footer>
 
+    @include('components.public-chatbot')
+
 </body>
 </html>

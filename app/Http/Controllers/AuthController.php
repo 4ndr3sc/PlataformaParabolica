@@ -40,9 +40,22 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user && !$user->is_active) {
+            return back()->withErrors([
+                'email' => 'Esta cuenta está desactivada. Contacta al administrador.',
+            ]);
+        }
+
         // Intentar autenticar (Laravel se encarga de comparar el Hash)
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // Seguridad contra ataques de fijación de sesión
+
+            if (Auth::user()->role === 'tecnico') {
+                return redirect('/tecnico/asignaciones');
+            }
+
             return redirect()->intended('/dashboard');
         }
 

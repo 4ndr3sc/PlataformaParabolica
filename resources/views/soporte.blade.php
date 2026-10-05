@@ -27,12 +27,24 @@
                 <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
                 </a>
-                <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
-                    <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
-                </a>
-                <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
-                    <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
-                </a>
+                @if(Auth::check() && Auth::user()->role === 'tecnico')
+                    <a href="{{ url('/tecnico/asignaciones') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-clipboard-list"></i> <span>Ver asignaciones</span>
+                    </a>
+                    <a href="{{ url('/tecnico/historial') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-history"></i> <span>Historial de soporte</span>
+                    </a>
+                @endif
+                @if(Auth::check() && Auth::user()->role === 'cliente')
+                    <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
+                    </a>
+                @endif
+                @if(Auth::check() && Auth::user()->role !== 'tecnico')
+                    <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
+                        <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
+                    </a>
+                @endif
                 <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
@@ -217,5 +229,6 @@
     </main>
 
     <script src="{{ asset('js/profile-photo-upload.js') }}"></script>
+    @include('components.public-chatbot')
 </body>
 </html>

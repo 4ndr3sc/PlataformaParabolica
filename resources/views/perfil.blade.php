@@ -25,15 +25,29 @@
             </div>
             
             <nav class="space-y-4">
-                <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
-                    <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
-                </a>
-                <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
-                    <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
-                </a>
-                <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
-                    <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
-                </a>
+                @if(Auth::check() && Auth::user()->role !== 'tecnico')
+                    <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
+                    </a>
+                @endif
+                @if(Auth::check() && Auth::user()->role === 'cliente')
+                    <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
+                    </a>
+                @endif
+                @if(Auth::check() && Auth::user()->role === 'tecnico')
+                    <a href="{{ url('/tecnico/asignaciones') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-clipboard-list"></i> <span>Ver asignaciones</span>
+                    </a>
+                    <a href="{{ url('/tecnico/historial') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-history"></i> <span>Historial de soporte</span>
+                    </a>
+                @endif
+                @if(Auth::check() && Auth::user()->role !== 'tecnico' && Auth::user()->role !== 'administrador')
+                    <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
+                    </a>
+                @endif
                 <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
@@ -43,9 +57,21 @@
                     </a>
                 @endif
                 @if(Auth::check() && Auth::user()->role === 'administrador')
-                    <div class="border-t border-slate-300 pt-4 mt-4">
+                    <div class="border-t border-slate-300 pt-4 mt-4 space-y-2">
                         <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-red-600 font-bold hover:bg-red-100 rounded-xl transition-all border-2 border-red-300">
                             <i class="fas fa-lock-open"></i> <span>Panel Admin</span>
+                        </a>
+                        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-user-shield"></i> <span>Control de accesos</span>
+                        </a>
+                        <a href="{{ url('/admin/tickets/asignar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-user-plus"></i> <span>Asignar técnico</span>
+                        </a>
+                        <a href="{{ url('/admin/validacion') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-clipboard-check"></i> <span>Control de validación</span>
+                        </a>
+                        <a href="{{ route('admin.reportes') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-chart-line"></i> <span>Reportes y analítica</span>
                         </a>
                     </div>
                 @endif
@@ -485,5 +511,6 @@
         }
     </script>
 
+    @include('components.public-chatbot')
 </body>
 </html>

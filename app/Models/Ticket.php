@@ -13,11 +13,17 @@ class Ticket extends Model
         'subject', 
         'description', 
         'status', 
-        'priority'
+        'priority',
+        'technician_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function technician()
+    {
+        return $this->belongsTo(User::class, 'technician_id');
     }
 }

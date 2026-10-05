@@ -80,5 +80,6 @@
             </p>
         </div>
     </div>
+    @include('components.public-chatbot')
 </body>
 </html>

@@ -29,6 +29,7 @@ class User extends Authenticatable
         'department',
         'profile_photo',
         'role',
+        'is_active',
     ];
 
     /**
@@ -52,5 +53,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function chatbotInteractions()
+    {
+        return $this->hasMany(ChatbotInteraction::class);
     }
 }

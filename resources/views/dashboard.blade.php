@@ -78,9 +78,20 @@
                     </a>
                 @endif
 
-                <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
-                    <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
-                </a>
+                @if(Auth::user()->role === 'tecnico')
+                    <a href="{{ url('/tecnico/asignaciones') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-clipboard-list"></i> <span>Ver asignaciones</span>
+                    </a>
+                    <a href="{{ url('/tecnico/historial') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-history"></i> <span>Historial de soporte</span>
+                    </a>
+                @endif
+
+                @if(Auth::user()->role !== 'tecnico' && Auth::user()->role !== 'administrador')
+                    <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
+                    </a>
+                @endif
 
                 <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
@@ -95,9 +106,21 @@
                 @endif
                 
                 @if(Auth::user()->role === 'administrador')
-                    <div class="border-t border-slate-300 pt-4 mt-4">
+                    <div class="border-t border-slate-300 pt-4 mt-4 space-y-2">
                         <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-red-600 font-bold hover:bg-red-100 rounded-xl transition-all border-2 border-red-300">
                             <i class="fas fa-lock-open"></i> <span>Panel Admin</span>
+                        </a>
+                        <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-user-shield"></i> <span>Control de accesos</span>
+                        </a>
+                        <a href="{{ url('/admin/tickets/asignar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-user-plus"></i> <span>Asignar técnico</span>
+                        </a>
+                        <a href="{{ url('/admin/validacion') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-clipboard-check"></i> <span>Control de validación</span>
+                        </a>
+                        <a href="{{ route('admin.reportes') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-chart-line"></i> <span>Reportes y analítica</span>
                         </a>
                     </div>
                 @endif
@@ -141,41 +164,41 @@
 
         @if(Auth::check() && Auth::user()->role === 'administrador')
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-8 md:mb-10">
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
+                <a href="{{ url('/admin/dashboard') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Total Usuarios</p>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $users->count() ?? 0 }}</h3>
                     <p class="text-blue-600 text-xs mt-2 font-bold uppercase tracking-widest italic">Registros</p>
-                </div>
+                </a>
 
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-red-500 shadow-lg border border-slate-200">
+                <a href="{{ url('/admin/dashboard') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-red-500 shadow-lg border border-slate-200 hover:border-red-600 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Administradores</p>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $users->where('role', 'administrador')->count() ?? 0 }}</h3>
                     <p class="text-red-600 text-xs mt-2 font-bold uppercase">Con acceso</p>
-                </div>
+                </a>
 
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-400 shadow-lg border border-slate-200">
+                <a href="{{ url('/admin/tickets/asignar') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-400 shadow-lg border border-slate-200 hover:border-blue-500 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Técnicos</p>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $users->where('role', 'tecnico')->count() ?? 0 }}</h3>
                     <p class="text-blue-600 text-xs mt-2 font-bold uppercase">Asignados</p>
-                </div>
+                </a>
 
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200">
+                <a href="{{ url('/admin/dashboard') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200 hover:border-yellow-600 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Tickets sin resolver</p>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $unresolvedTickets ?? 0 }}</h3>
                     <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">Por atención</p>
-                </div>
+                </a>
 
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200">
+                <a href="{{ url('/admin/dashboard') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200 hover:border-green-600 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Tickets Abiertos</p>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $openTickets ?? 0 }}</h3>
                     <p class="text-green-600 text-xs mt-2 font-bold uppercase">En curso</p>
-                </div>
+                </a>
 
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-gray-400 shadow-lg border border-slate-200">
+                <a href="{{ url('/admin/dashboard') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-gray-400 shadow-lg border border-slate-200 hover:border-gray-500 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Tickets Totales</p>
                     <h3 class="text-xl md:text-2xl font-black text-slate-900">{{ $totalTickets ?? 0 }}</h3>
                     <p class="text-gray-500 text-xs mt-2 font-bold uppercase">Registros</p>
-                </div>
+                </a>
             </div>
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
@@ -453,5 +476,6 @@
             document.head.appendChild(style);
         }
     </script>
+    @include('components.public-chatbot')
 </body>
 </html>

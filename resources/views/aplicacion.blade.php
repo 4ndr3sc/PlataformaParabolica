@@ -24,9 +24,11 @@
             </div>
             
             <nav class="space-y-4">
-                <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
-                    <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
-                </a>
+                @if(Auth::check() && Auth::user()->role !== 'tecnico')
+                    <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
+                        <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
+                    </a>
+                @endif
                 <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all">
                     <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
                 </a>
@@ -279,5 +281,6 @@
 
     <script src="{{ asset('js/profile-photo-upload.js') }}"></script>
 
+    @include('components.public-chatbot')
 </body>
 </html>
