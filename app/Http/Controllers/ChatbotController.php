@@ -128,15 +128,24 @@ class ChatbotController extends Controller
         ));
     }
 
+    protected function createInteractionRecord(array $attributes): void
+    {
+        ChatbotInteraction::create($attributes);
+    }
+
     private function storeInteraction(string $question, string $answer, bool $wasFallback = false): void
     {
-        ChatbotInteraction::create([
-            'user_id' => Auth::id(),
-            'role' => $this->currentRole(),
-            'question' => $question,
-            'answer' => $answer,
-            'was_fallback' => $wasFallback,
-        ]);
+        try {
+            $this->createInteractionRecord([
+                'user_id' => Auth::id(),
+                'role' => $this->currentRole(),
+                'question' => $question,
+                'answer' => $answer,
+                'was_fallback' => $wasFallback,
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     private function fallbackReply(string $question, string $role, ?string $page = null): string
