@@ -7,6 +7,24 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Reflexión Transhumana / Transhuman Reflection
+
+### Español
+
+En el contexto de ASO TV, la integración de un chatbot con inteligencia artificial se entiende como una herramienta al servicio de las personas, no como un fin en sí mismo. Su diseño busca respetar la dignidad y la autonomía de los habitantes de Guachetá mediante respuestas claras, en español o inglés, sobre los servicios de televisión, antenas y soporte de la empresa. La base de conocimiento estructurada y el contexto RAG limitan las respuestas a información institucional disponible; las instrucciones del sistema indican que el agente no debe inventar datos y que debe reconocer cuando no cuenta con información suficiente. Este enfoque reduce el riesgo de desinformación y hace más transparente el alcance del sistema, aunque no sustituye la supervisión ni el criterio humano.
+
+El chatbot tampoco reemplaza al personal de ASO TV. Funciona como una extensión tecnológica para orientar a las personas en tareas operativas —por ejemplo, comprender cómo reportar una falla o crear y consultar un ticket PQRS— y facilitar el acceso a información básica. Al reducir consultas repetitivas y ayudar a organizar las solicitudes, puede liberar tiempo para que los técnicos se concentren en el diagnóstico y la solución presencial de problemas complejos. Las decisiones técnicas que requieren inspección, intervención física o conocimiento especializado siguen correspondiendo al equipo humano.
+
+Desde una perspectiva educativa y social, el agente acompaña a los usuarios mientras aprenden a utilizar los canales digitales de autogestión: explica procesos, familiariza a la comunidad con herramientas tecnológicas y facilita la interacción con los servicios de ASO TV en dos idiomas. Así, puede contribuir a la alfabetización digital y a una participación más informada en la gestión de necesidades locales. Esta reflexión se alinea con una visión transhumanista centrada en ampliar las capacidades humanas mediante la tecnología y en orientar la innovación al desarrollo integral, inclusivo y responsable de las personas, sin confundir automatización con reemplazo humano.
+
+### English
+
+In the context of ASO TV, integrating an artificial intelligence chatbot is understood as a tool in service of people, not as an end in itself. Its design aims to respect the dignity and autonomy of Guachetá residents by providing clear answers, in Spanish or English, about the company’s television, antenna, and support services. The structured knowledge base and RAG context constrain responses to available institutional information; the system instructions tell the agent not to invent facts and to acknowledge when it lacks sufficient information. This approach reduces the risk of misinformation and makes the system’s scope more transparent, while recognizing that it does not replace human oversight or judgment.
+
+The chatbot does not replace ASO TV staff. It acts as a technological extension that guides people through operational tasks—such as understanding how to report a signal failure or create and follow up on a PQRS ticket—and makes basic information easier to access. By reducing repetitive inquiries and helping organize requests, it can free technicians to focus on diagnosing and physically resolving complex problems. Technical decisions that require inspection, on-site intervention, or specialized expertise remain the responsibility of human staff.
+
+From an educational and social perspective, the agent supports users as they learn to use digital self-service channels: it explains processes, familiarizes the community with technological tools, and enables interaction with ASO TV services in two languages. In this way, it can contribute to digital literacy and more informed participation in addressing local needs. This reflection aligns with a transhumanist vision centered on extending human capabilities through technology and directing innovation toward people’s holistic, inclusive, and responsible development, without mistaking automation for human replacement.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
