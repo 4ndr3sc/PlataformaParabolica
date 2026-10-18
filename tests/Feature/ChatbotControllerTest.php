@@ -39,7 +39,12 @@ class ChatbotControllerTest extends TestCase
 
             return str_contains($url, 'models/gemini-3.6-flash:generateContent')
                 && str_contains($url, 'key=test-key')
-                && str_contains($systemInstruction, 'Responde en el mismo idioma que el último mensaje del usuario (español o inglés)');
+                && str_contains($systemInstruction, 'Responde en el mismo idioma que el último mensaje del usuario (español o inglés)')
+                && str_contains($systemInstruction, 'Responde únicamente sobre ASO TV')
+                && str_contains($systemInstruction, 'niégate amablemente')
+                && str_contains($systemInstruction, 'CONTEXTO AUTORIZADO (única fuente factual)')
+                && str_contains($systemInstruction, '"reportar_falla_de_senal"')
+                && str_contains($systemInstruction, '"horario_de_oficina": null');
         });
     }
 

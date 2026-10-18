@@ -1,0 +1,93 @@
+{
+    "empresa": {
+        "nombre": "ASO TV",
+        "nombre_legal_o_descriptivo": "Asociación de Televisión Comunitaria de Guachetá",
+        "municipio": "Guachetá",
+        "departamento": "Cundinamarca",
+        "naturaleza": "Organización sin ánimo de lucro",
+        "proposito": "Conectar a la comunidad con información local, televisión e internet."
+    },
+    "servicios": [
+        {
+            "nombre": "Televisión Digital",
+            "descripcion": "Más de 60 canales HD y contenido familiar."
+        },
+        {
+            "nombre": "Canal 8",
+            "descripcion": "Información de la comunidad, misas, eventos culturales y noticias locales."
+        },
+        {
+            "nombre": "Internet",
+            "descripcion": "Internet de alta velocidad y fibra óptica. La disponibilidad de cobertura debe confirmarse con ASO TV."
+        }
+    ],
+    "planes": [
+        {
+            "nombre": "Solo WiFi",
+            "precio_mensual_cop": 47900,
+            "caracteristicas": [
+                "100 MB de velocidad",
+                "WiFi para el hogar",
+                "Soporte técnico 24/7"
+            ]
+        },
+        {
+            "nombre": "Solo Televisión",
+            "precio_mensual_cop": 27000,
+            "caracteristicas": [
+                "Más de 60 canales HD",
+                "Soporte técnico 24/7"
+            ]
+        },
+        {
+            "nombre": "WiFi + TV",
+            "precio_mensual_cop": 74900,
+            "caracteristicas": [
+                "100 MB de WiFi satelital",
+                "65 canales HD",
+                "Soporte técnico 24/7"
+            ]
+        }
+    ],
+    "soporte": {
+        "atencion_tecnica": "El soporte técnico se anuncia como disponible 24/7.",
+        "reportar_falla_de_senal": [
+            "Inicia sesión en tu cuenta de ASO TV.",
+            "Entra al área Soporte Técnico y selecciona Crear Nuevo Ticket.",
+            "En Tipo de PQR, selecciona Falla Técnica.",
+            "Selecciona una prioridad, escribe un asunto y describe detalladamente la falla.",
+            "Envía el ticket y consulta su avance desde el panel de soporte."
+        ],
+        "tipos_de_pqr_disponibles": [
+            "Falla Técnica",
+            "Facturación",
+            "Reclamo"
+        ],
+        "prioridades_disponibles": [
+            "Baja",
+            "Media",
+            "Alta"
+        ],
+        "estados_de_ticket_mostrados": [
+            "Abierto",
+            "En progreso",
+            "Resuelto"
+        ],
+        "acceso": "La creación y consulta de tickets se realiza desde la cuenta autenticada del usuario."
+    },
+    "horarios_y_contacto": {
+        "soporte_tecnico": "24/7, según la información publicada para los planes.",
+        "horario_de_oficina": null,
+        "telefono": null,
+        "whatsapp": null,
+        "nota": "No se proporciona un horario de oficina ni un teléfono o WhatsApp verificable en la base de conocimiento."
+    },
+    "instalacion_y_cobertura": {
+        "instalacion": "La plataforma anuncia instalación rápida en 24 horas; la disponibilidad debe confirmarse con ASO TV.",
+        "cobertura": "Debe confirmarse directamente con ASO TV para la ubicación del usuario."
+    },
+    "cuenta": {
+        "inicio_de_sesion": "Usa la opción Ingresar, escribe el correo registrado y la contraseña.",
+        "registro": "Completa nombres, apellidos, correo, contraseña y confirmación en el formulario de registro."
+    }
+}
