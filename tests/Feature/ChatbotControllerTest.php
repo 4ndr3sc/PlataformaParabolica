@@ -85,6 +85,35 @@ class ChatbotControllerTest extends TestCase
         $this->assertStringContainsString(url('/soporte/crear'), $response->json('message'));
     }
 
+    public function test_it_answers_generic_technical_fault_questions_in_english(): void
+    {
+        config()->set('services.gemini.key', null);
+
+        $response = $this->postJson('/chatbot/reply', [
+            'message' => '31 How can I report a fault?',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonMissingPath('fallback');
+        $this->assertStringContainsString('To report a technical fault', $response->json('message'));
+        $this->assertStringContainsString('Technical Fault', $response->json('message'));
+        $this->assertStringContainsString(url('/soporte/crear'), $response->json('message'));
+    }
+
+    public function test_it_answers_generic_technical_fault_questions_in_spanish(): void
+    {
+        config()->set('services.gemini.key', null);
+
+        $response = $this->postJson('/chatbot/reply', [
+            'message' => '¿Cómo reporto una falla?',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonMissingPath('fallback');
+        $this->assertStringContainsString('Para reportar una falla técnica', $response->json('message'));
+        $this->assertStringContainsString('Tipo de PQR, selecciona Falla Técnica', $response->json('message'));
+    }
+
     public function test_it_answers_transhumanist_questions_when_gemini_is_unavailable(): void
     {
         config()->set('services.gemini.key', null);

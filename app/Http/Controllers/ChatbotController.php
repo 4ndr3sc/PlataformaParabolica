@@ -270,7 +270,7 @@ class ChatbotController extends Controller
             || str_contains($normalizedQuestion, 'wifi')
             || str_contains($normalizedQuestion, 'wi-fi');
         $mentionsFailure = preg_match(
-            '/\b(falla|fallo|problema|problemas|interrupción|interrupcion|daño|dano|reportar|reporte|report|fault|issue|problem|outage|down|broken)\b/u',
+            '/\b(falla|fallo|problema|problemas|interrupción|interrupcion|daño|dano|fault|failure|issue|problem|outage|down|broken)\b/u',
             $normalizedQuestion
         ) === 1
             || str_contains($normalizedQuestion, 'no funciona')
@@ -281,8 +281,12 @@ class ChatbotController extends Controller
             || str_contains($normalizedQuestion, 'se cayó')
             || str_contains($normalizedQuestion, 'se cayo')
             || str_contains($normalizedQuestion, 'internet lento');
+        $asksToReport = preg_match(
+            '/\b(report|reportar|reporte|reporto|informar|notificar|file|submit)\b/u',
+            $normalizedQuestion
+        ) === 1;
 
-        if (!$mentionsInternet || !$mentionsFailure) {
+        if (!$mentionsFailure || (!$mentionsInternet && !$asksToReport)) {
             return null;
         }
 
@@ -293,7 +297,7 @@ class ChatbotController extends Controller
         }
 
         if ($this->isEnglishQuestion($normalizedQuestion)) {
-            return "To report an internet problem, create a support ticket:\n\n"
+            return "To report a technical fault, create a support ticket:\n\n"
                 . "1. Sign in to your AsoTV account.\n"
                 . "2. Go to Technical Support and select “Create New Ticket”.\n"
                 . "3. For PQR type, select “Technical Fault”.\n"
@@ -302,7 +306,7 @@ class ChatbotController extends Controller
                 . 'You can open the form at ' . url('/soporte/crear') . '.';
         }
 
-        return "Para reportar una falla de internet, crea un ticket de soporte:\n\n"
+        return "Para reportar una falla técnica, crea un ticket de soporte:\n\n"
             . implode("\n", array_map(
                 fn (string $step, int $index): string => ($index + 1) . '. ' . $step,
                 $steps,
@@ -315,7 +319,7 @@ class ChatbotController extends Controller
     {
         preg_match_all('/\b[\p{L}]+\b/u', mb_strtolower($question), $matches);
         $words = $matches[0] ?? [];
-        $englishWords = ['about', 'account', 'are', 'can', 'channels', 'contact', 'could', 'do', 'does', 'how', 'i', 'is', 'login', 'me', 'my', 'need', 'offer', 'please', 'price', 'prices', 'register', 'sign', 'support', 'tell', 'the', 'what', 'which', 'who', 'why', 'would', 'your'];
+        $englishWords = ['about', 'account', 'are', 'can', 'channels', 'contact', 'could', 'do', 'does', 'fault', 'failure', 'how', 'i', 'is', 'issue', 'login', 'me', 'my', 'need', 'offer', 'outage', 'please', 'price', 'prices', 'problem', 'register', 'report', 'sign', 'support', 'tell', 'the', 'what', 'which', 'who', 'why', 'would', 'your'];
         $spanishWords = ['cuanto', 'cuánto', 'cual', 'cuál', 'cuales', 'cuáles', 'como', 'cómo', 'donde', 'dónde', 'hace', 'hay', 'necesito', 'ofrecen', 'para', 'puedo', 'puedes', 'qué', 'que', 'quiero', 'tienen', 'tiene'];
 
         return count(array_intersect($words, $englishWords)) > count(array_intersect($words, $spanishWords));
