@@ -17,6 +17,8 @@ El chatbot tampoco reemplaza al personal de ASO TV. Funciona como una extensión
 
 Desde una perspectiva educativa y social, el agente acompaña a los usuarios mientras aprenden a utilizar los canales digitales de autogestión: explica procesos, familiariza a la comunidad con herramientas tecnológicas y facilita la interacción con los servicios de ASO TV en dos idiomas. Así, puede contribuir a la alfabetización digital y a una participación más informada en la gestión de necesidades locales. Esta reflexión se alinea con una visión transhumanista centrada en ampliar las capacidades humanas mediante la tecnología y en orientar la innovación al desarrollo integral, inclusivo y responsable de las personas, sin confundir automatización con reemplazo humano.
 
+El chatbot puede responder preguntas tanto sobre los servicios de ASO TV como sobre esta reflexión transhumanista. La información disponible describe la reflexión del proyecto, no el texto íntegro de la Declaración de la Persona Transhumana de la Universidad de Cundinamarca; por ello, el agente no debe atribuirle artículos o principios específicos que no estén documentados.
+
 ### English
 
 In the context of ASO TV, integrating an artificial intelligence chatbot is understood as a tool in service of people, not as an end in itself. Its design aims to respect the dignity and autonomy of Guachetá residents by providing clear answers, in Spanish or English, about the company’s television, antenna, and support services. The structured knowledge base and RAG context constrain responses to available institutional information; the system instructions tell the agent not to invent facts and to acknowledge when it lacks sufficient information. This approach reduces the risk of misinformation and makes the system’s scope more transparent, while recognizing that it does not replace human oversight or judgment.
@@ -24,6 +26,8 @@ In the context of ASO TV, integrating an artificial intelligence chatbot is unde
 The chatbot does not replace ASO TV staff. It acts as a technological extension that guides people through operational tasks—such as understanding how to report a signal failure or create and follow up on a PQRS ticket—and makes basic information easier to access. By reducing repetitive inquiries and helping organize requests, it can free technicians to focus on diagnosing and physically resolving complex problems. Technical decisions that require inspection, on-site intervention, or specialized expertise remain the responsibility of human staff.
 
 From an educational and social perspective, the agent supports users as they learn to use digital self-service channels: it explains processes, familiarizes the community with technological tools, and enables interaction with ASO TV services in two languages. In this way, it can contribute to digital literacy and more informed participation in addressing local needs. This reflection aligns with a transhumanist vision centered on extending human capabilities through technology and directing innovation toward people’s holistic, inclusive, and responsible development, without mistaking automation for human replacement.
+
+The chatbot can answer questions about both ASO TV services and this transhumanist reflection. The available information describes the project's reflection, not the full text of the University of Cundinamarca's Declaration of the Transhuman Person; the agent should therefore not attribute undocumented articles or principles to it.
 
 ## About Laravel
 

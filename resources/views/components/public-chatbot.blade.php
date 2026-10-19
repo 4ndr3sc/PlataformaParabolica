@@ -169,7 +169,7 @@
             <i class="fas fa-robot text-yellow-400" aria-hidden="true"></i>
             <div>
                 <p class="text-base font-bold">Asistente AsoTV</p>
-                <p class="text-sm text-blue-200">Información sobre nuestros servicios</p>
+                <p class="text-sm text-blue-200">AsoTV y Persona Transhumana</p>
             </div>
         </div>
         <button type="button" id="asotv-chatbot-close" class="text-blue-200 transition hover:text-white" aria-label="Cerrar chat">
@@ -178,7 +178,7 @@
     </div>
 
     <div id="asotv-chatbot-messages" class="asotv-chatbot-messages" aria-live="polite">
-        <p class="asotv-chatbot-message asotv-chatbot-message--bot">¡Hola! Puedo ayudarte con información sobre televisión, internet y nuestros planes.</p>
+        <p class="asotv-chatbot-message asotv-chatbot-message--bot">¡Hola! Puedo ayudarte con AsoTV y sus servicios, o con la reflexión transhumanista sobre aprendizaje y tecnología.</p>
     </div>
 
     <div class="asotv-chatbot-options">

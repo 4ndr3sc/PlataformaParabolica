@@ -89,5 +89,12 @@
     "cuenta": {
         "inicio_de_sesion": "Usa la opción Ingresar, escribe el correo registrado y la contraseña.",
         "registro": "Completa nombres, apellidos, correo, contraseña y confirmación en el formulario de registro."
+    },
+    "reflexion_transhumana": {
+        "alcance": "El proyecto contiene una reflexión transhumanista, no el texto íntegro de la Declaración de la Persona Transhumana de la Universidad de Cundinamarca. No se deben atribuir a la Declaración artículos o principios específicos que no estén documentados aquí.",
+        "enfoque": "La tecnología se entiende como una herramienta al servicio de las personas, orientada a respetar su dignidad y autonomía y a ampliar sus capacidades.",
+        "aprendizaje_e_interaccion": "El chatbot explica procesos y acompaña el uso de canales digitales de autogestión, lo que puede apoyar la alfabetización digital y una participación más informada.",
+        "responsabilidad": "El asistente debe ofrecer información clara basada en datos institucionales disponibles, reconocer cuando no tiene información suficiente y no sustituir la supervisión ni el criterio humano.",
+        "relacion_con_asotv": "El chatbot orienta sobre servicios y procesos operativos de ASO TV, como reportar fallas o crear y consultar tickets PQRS. El personal técnico conserva las decisiones que requieren inspección, intervención presencial o conocimiento especializado."
     }
 }

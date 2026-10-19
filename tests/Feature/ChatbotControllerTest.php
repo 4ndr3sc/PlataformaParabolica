@@ -40,12 +40,79 @@ class ChatbotControllerTest extends TestCase
             return str_contains($url, 'models/gemini-3.6-flash:generateContent')
                 && str_contains($url, 'key=test-key')
                 && str_contains($systemInstruction, 'Responde en el mismo idioma que el último mensaje del usuario (español o inglés)')
-                && str_contains($systemInstruction, 'Responde únicamente sobre ASO TV')
-                && str_contains($systemInstruction, 'niégate amablemente')
+                && str_contains($systemInstruction, 'Responde únicamente sobre ASO TV y sus servicios, o sobre la reflexión transhumanista')
+                && str_contains($systemInstruction, 'no el texto íntegro de la Declaración')
                 && str_contains($systemInstruction, 'CONTEXTO AUTORIZADO (única fuente factual)')
+                && str_contains($systemInstruction, 'ANÁLISIS Y CONSULTA')
+                && str_contains($systemInstruction, 'no respondas con planes, precios o una descripción general de internet')
                 && str_contains($systemInstruction, '"reportar_falla_de_senal"')
+                && str_contains($systemInstruction, '"reflexion_transhumana"')
                 && str_contains($systemInstruction, '"horario_de_oficina": null');
         });
+    }
+
+    public function test_it_uses_the_documented_support_procedure_for_internet_fault_questions(): void
+    {
+        config()->set('services.gemini.key', 'test-key');
+        Http::fake();
+
+        $response = $this->postJson('/chatbot/reply', [
+            'message' => 'como reporto una falla en mi internet',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonMissingPath('fallback');
+        $this->assertStringContainsString('crea un ticket de soporte', $response->json('message'));
+        $this->assertStringContainsString('Tipo de PQR, selecciona Falla Técnica', $response->json('message'));
+        $this->assertStringContainsString('describe detalladamente la falla', $response->json('message'));
+        $this->assertStringContainsString(url('/soporte/crear'), $response->json('message'));
+        $this->assertStringNotContainsString('El plan Solo WiFi', $response->json('message'));
+
+        Http::assertNothingSent();
+    }
+
+    public function test_it_answers_internet_fault_questions_in_english(): void
+    {
+        config()->set('services.gemini.key', null);
+
+        $response = $this->postJson('/chatbot/reply', [
+            'message' => 'How do I report an internet outage?',
+        ]);
+
+        $response->assertOk();
+        $this->assertStringContainsString('create a support ticket', $response->json('message'));
+        $this->assertStringContainsString('Technical Fault', $response->json('message'));
+        $this->assertStringContainsString(url('/soporte/crear'), $response->json('message'));
+    }
+
+    public function test_it_answers_transhumanist_questions_when_gemini_is_unavailable(): void
+    {
+        config()->set('services.gemini.key', null);
+
+        $response = $this->postJson('/chatbot/reply', [
+            'message' => '¿De qué manera el agente respeta la dignidad y autonomía en el aprendizaje y la interacción tecnológica?',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('fallback', true);
+        $this->assertStringContainsString('el chatbot pone a las personas en el centro', $response->json('message'));
+        $this->assertStringContainsString('apoyar el aprendizaje y la alfabetización digital', $response->json('message'));
+        $this->assertStringContainsString('no el texto íntegro de la Declaración', $response->json('message'));
+    }
+
+    public function test_it_answers_transhumanist_questions_in_english_when_gemini_is_unavailable(): void
+    {
+        config()->set('services.gemini.key', null);
+
+        $response = $this->postJson('/chatbot/reply', [
+            'message' => 'How does the implemented AI agent/chatbot align with and support the Transhuman Person Declaration of Universidad de Cundinamarca regarding ethical AI integration, human augmentation, and educational transformation?',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('fallback', true);
+        $this->assertStringContainsString('the chatbot puts people first', $response->json('message'));
+        $this->assertStringContainsString('support learning and digital literacy', $response->json('message'));
+        $this->assertStringContainsString('not the full text of the Declaration', $response->json('message'));
     }
 
     public function test_it_uses_english_for_english_fallback_questions(): void
