@@ -37,7 +37,7 @@
         @endif
 
         <!-- User Info Card -->
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="mb-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
             <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <i class="fas fa-user-circle text-blue-500"></i> Información del Usuario
             </h2>
@@ -91,7 +91,7 @@
         <form action="{{ route('admin.update-role', $user->id) }}" method="POST">
             @csrf
             
-            <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
                 <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <i class="fas fa-shield-alt text-purple-500"></i> Gestión de Rol
                 </h2>
@@ -100,7 +100,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Rol Actual</label>
                     <div class="inline-block px-4 py-2 rounded-full text-sm font-semibold
-                        @if($user->role === 'administrador')
+                        @if($user->isAdministrator())
                             bg-red-100 text-red-800
                         @elseif($user->role === 'tecnico')
                             bg-blue-100 text-blue-800
@@ -109,7 +109,7 @@
                         @endif
                     ">
                         <i class="fas 
-                            @if($user->role === 'administrador')
+                            @if($user->isAdministrator())
                                 fa-crown
                             @elseif($user->role === 'tecnico')
                                 fa-tools

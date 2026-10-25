@@ -62,7 +62,10 @@
             </div>
             
             <nav class="space-y-4">
-                @if(Auth::check() && Auth::user()->role === 'administrador')
+                @if(Auth::check() && Auth::user()->isSuperuser())
+                    @include('components.superuser-navigation')
+                @else
+                @if(Auth::check() && Auth::user()->isAdministrator())
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 p-3 bg-blue-100 text-blue-600 rounded-xl border border-blue-300 shadow-lg shadow-blue-200/50">
                         <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
                     </a>
@@ -72,13 +75,13 @@
                     </a>
                 @endif
 
-                @if(Auth::user()->role === 'cliente')
+                @if(Auth::user()->role === 'cliente' || Auth::user()->isSuperuser())
                     <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                         <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
                     </a>
                 @endif
 
-                @if(Auth::user()->role === 'tecnico')
+                @if(Auth::user()->role === 'tecnico' || Auth::user()->isSuperuser())
                     <a href="{{ url('/tecnico/asignaciones') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                         <i class="fas fa-clipboard-list"></i> <span>Ver asignaciones</span>
                     </a>
@@ -87,7 +90,7 @@
                     </a>
                 @endif
 
-                @if(Auth::user()->role !== 'tecnico' && Auth::user()->role !== 'administrador')
+                @if((Auth::user()->role !== 'tecnico' && Auth::user()->role !== 'administrador') || Auth::user()->isSuperuser())
                     <a href="{{ url('/soporte') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                         <i class="fas fa-tools"></i> <span>Soporte Técnico</span>
                     </a>
@@ -97,15 +100,15 @@
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
 
-                @if(Auth::user()->role === 'cliente')
-                    @if(!(Auth::check() && Auth::user()->role === 'administrador'))
+                @if(Auth::user()->role === 'cliente' || Auth::user()->isSuperuser())
+                    @if(!(Auth::check() && Auth::user()->isAdministrator()) || Auth::user()->isSuperuser())
                         <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-green-100 hover:text-green-600 rounded-xl transition-all border border-transparent hover:border-green-300">
                             <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
                         </a>
                     @endif
                 @endif
                 
-                @if(Auth::user()->role === 'administrador')
+                @if(Auth::user()->isAdministrator())
                     <div class="border-t border-slate-300 pt-4 mt-4 space-y-2">
                         <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-red-600 font-bold hover:bg-red-100 rounded-xl transition-all border-2 border-red-300">
                             <i class="fas fa-lock-open"></i> <span>Panel Admin</span>
@@ -123,6 +126,7 @@
                             <i class="fas fa-chart-line"></i> <span>Reportes y analítica</span>
                         </a>
                     </div>
+                @endif
                 @endif
             </nav>
         </div>
@@ -162,7 +166,7 @@
             </div>
         </header>
 
-        @if(Auth::check() && Auth::user()->role === 'administrador')
+        @if(Auth::check() && Auth::user()->isAdministrator())
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-8 md:mb-10">
                 <a href="{{ url('/admin/dashboard') }}" class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all block">
                     <p class="text-slate-600 text-xs md:text-sm font-bold uppercase mb-2">Total Usuarios</p>

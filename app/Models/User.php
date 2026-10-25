@@ -59,4 +59,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(ChatbotInteraction::class);
     }
+
+    public function isSuperuser(): bool
+    {
+        return $this->role === 'superusuario';
+    }
+
+    public function isAdministrator(): bool
+    {
+        return in_array($this->role, ['administrador', 'superusuario'], true);
+    }
+
+    public function hasRole(string ...$roles): bool
+    {
+        return $this->isSuperuser() || in_array($this->role, $roles, true);
+    }
 }

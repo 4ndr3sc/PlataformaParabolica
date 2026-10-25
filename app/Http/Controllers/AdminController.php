@@ -15,13 +15,13 @@ class AdminController extends Controller
     public function dashboard()
     {
         // Verificar que el usuario sea administrador
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso para acceder aquí.');
         }
 
         $users = User::all();
         $tickets = Ticket::with(['user', 'technician'])->get();
-        $technicians = User::where('role', 'tecnico')->get();
+        $technicians = User::whereIn('role', ['tecnico', 'superusuario'])->get();
 
         try {
             $totalTickets = Ticket::count();
@@ -40,19 +40,19 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
         $user = User::findOrFail($id);
-        $roles = ['cliente', 'aliado', 'tecnico', 'administrador'];
+        $roles = ['cliente', 'aliado', 'tecnico', 'administrador', 'superusuario'];
 
         return view('admin.edit-user', compact('user', 'roles'));
     }
 
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
@@ -60,7 +60,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:cliente,aliado,tecnico,administrador',
+            'role' => 'required|in:cliente,aliado,tecnico,administrador,superusuario',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -80,12 +80,12 @@ class AdminController extends Controller
      */
     public function updateRole(Request $request, $id)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
         $request->validate([
-            'role' => 'required|in:cliente,aliado,tecnico,administrador',
+            'role' => 'required|in:cliente,aliado,tecnico,administrador,superusuario',
         ]);
 
         $user = User::findOrFail($id);
@@ -96,19 +96,19 @@ class AdminController extends Controller
 
     public function ticketAssignmentPage()
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
         $tickets = Ticket::with(['user', 'technician'])->get();
-        $technicians = User::where('role', 'tecnico')->get();
+        $technicians = User::whereIn('role', ['tecnico', 'superusuario'])->get();
 
         return view('admin.asignar-ticket', compact('tickets', 'technicians'));
     }
 
     public function validationOverview(Request $request)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
@@ -146,7 +146,7 @@ class AdminController extends Controller
 
     public function reports(Request $request)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
@@ -221,12 +221,16 @@ class AdminController extends Controller
 
     public function assignTicketToTechnician(Request $request, $ticketId)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
         $request->validate([
-            'technician_id' => 'required|exists:users,id,role,tecnico',
+            'technician_id' => [
+                'required',
+                \Illuminate\Validation\Rule::exists('users', 'id')
+                    ->whereIn('role', ['tecnico', 'superusuario']),
+            ],
         ]);
 
         $ticket = \App\Models\Ticket::findOrFail($ticketId);
@@ -237,7 +241,7 @@ class AdminController extends Controller
 
     public function toggleStatus($id)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 
@@ -259,7 +263,7 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        if (Auth::user()->role !== 'administrador') {
+        if (!Auth::user()->isAdministrator()) {
             return redirect('/dashboard')->with('error', 'No tienes permiso.');
         }
 

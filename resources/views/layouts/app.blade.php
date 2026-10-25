@@ -14,6 +14,15 @@
     </style>
 </head>
 <body class="bg-gray-50">
+    @if(Auth::check() && Auth::user()->isSuperuser())
+        <nav class="sticky top-0 z-40 overflow-x-auto border-b border-slate-200 bg-white px-4 py-2 shadow-sm">
+            @include('components.superuser-navigation', ['horizontalNavigation' => true])
+        </nav>
+    @elseif(Auth::check() && Auth::user()->isAdministrator())
+        <nav class="sticky top-0 z-40 overflow-x-auto border-b border-slate-200 bg-white px-4 py-2 shadow-sm">
+            @include('components.admin-navigation')
+        </nav>
+    @endif
     @yield('content')
     @include('components.public-chatbot')
 </body>

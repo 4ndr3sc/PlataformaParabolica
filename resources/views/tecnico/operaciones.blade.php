@@ -17,6 +17,9 @@
             </div>
 
             <nav class="space-y-4">
+                @if(Auth::check() && Auth::user()->isSuperuser())
+                    @include('components.superuser-navigation')
+                @else
                 <a href="{{ url('/tecnico/asignaciones') }}" class="flex items-center gap-3 p-3 {{ $section === 'asignaciones' ? 'bg-blue-100 text-blue-600 border border-blue-300' : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900' }} rounded-xl transition-all">
                     <i class="fas fa-clipboard-list"></i> <span>Ver asignaciones</span>
                 </a>
@@ -30,6 +33,7 @@
                 <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-green-100 hover:text-green-600 rounded-xl transition-all border border-transparent hover:border-green-300">
                     <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
                 </a>
+                @endif
             </nav>
         </div>
 

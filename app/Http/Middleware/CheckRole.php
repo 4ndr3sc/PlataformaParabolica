@@ -21,7 +21,7 @@ class CheckRole
         }
 
         // Verificar si el usuario tiene uno de los roles permitidos
-        if (in_array($request->user()->role, $roles)) {
+        if ($request->user()->hasRole(...$roles)) {
             return $next($request);
         }
 

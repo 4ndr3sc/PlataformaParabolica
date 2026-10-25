@@ -119,7 +119,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Cargamos los tickets con un try-catch preventivo
         try {
-            if ($user && $user->role === 'administrador') {
+            if ($user && $user->isAdministrator()) {
                 $users = \App\Models\User::all();
                 $totalTickets = \App\Models\Ticket::count();
                 $openTickets = \App\Models\Ticket::where('status', 'abierto')->count();
@@ -156,7 +156,7 @@ Route::middleware(['auth'])->group(function () {
         $unpaid_users_previous_months = collect();
         $all_users = collect();
 
-        if ($user && $user->role === 'administrador') {
+        if ($user && $user->isAdministrator()) {
             try {
                 $total_users = \App\Models\User::count();
 

@@ -24,6 +24,9 @@
             </div>
             
             <nav class="space-y-4">
+                @if(Auth::check() && Auth::user()->isSuperuser())
+                    @include('components.superuser-navigation')
+                @else
                 <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-th-large"></i> <span class="font-bold">Resumen</span>
                 </a>
@@ -36,17 +39,18 @@
                 <a href="{{ url('/perfil') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                     <i class="fas fa-user-cog"></i> <span>Mi Perfil</span>
                 </a>
-                @if(!(Auth::check() && Auth::user()->role === 'administrador'))
+                @if(!(Auth::check() && Auth::user()->isAdministrator()) || Auth::user()->isSuperuser())
                     <a href="{{ url('/app/descargar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-green-100 hover:text-green-600 rounded-xl transition-all border border-transparent hover:border-green-300">
                         <i class="fas fa-mobile-alt"></i> <span>Aplicación</span>
                     </a>
                 @endif
-                @if(Auth::check() && Auth::user()->role === 'administrador')
+                @if(Auth::check() && Auth::user()->isAdministrator())
                     <div class="border-t border-slate-300 pt-4 mt-4">
                         <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-red-600 font-bold hover:bg-red-100 rounded-xl transition-all border-2 border-red-300">
                             <i class="fas fa-lock-open"></i> <span>Panel Admin</span>
                         </a>
                     </div>
+                @endif
                 @endif
             </nav>
         </div>

@@ -179,7 +179,7 @@ class ChatbotController extends Controller
 
         if (str_contains($question, 'qué hace este rol') || str_contains($question, 'que hace este rol') || str_contains($question, 'funciones de mi rol')) {
             return match ($role) {
-                'administrador' => 'Tu rol de administrador permite gestionar usuarios, roles, estados de cuenta, tickets, asignaciones y reportes de AsoTV. No puedo mostrar contraseñas ni datos privados desde este chat.',
+                'administrador', 'superusuario' => 'Tu rol permite gestionar usuarios, roles, estados de cuenta, tickets, asignaciones y reportes de AsoTV, además de consultar funciones técnicas y de usuario. No puedo mostrar contraseñas ni datos privados desde este chat.',
                 'tecnico' => 'Tu rol de técnico permite consultar tus asignaciones, actualizar estados y revisar el historial autorizado de atención. No tienes acceso a datos privados de otros usuarios.',
                 'cliente', 'aliado' => 'Tu rol permite consultar tus servicios, facturas, tickets, planes y soporte. Para datos concretos de tu cuenta debes usar las opciones del panel autenticado.',
                 default => 'Como visitante puedes conocer los planes, servicios, contacto, registro e inicio de sesión de AsoTV. Las funciones privadas requieren una cuenta autenticada.',
@@ -236,7 +236,7 @@ class ChatbotController extends Controller
 
         if (str_contains($question, 'ticket') || str_contains($question, 'asignacion') || str_contains($question, 'asignación')) {
             return match ($role) {
-                'administrador' => 'Desde el panel de administrador puedes revisar tickets, asignarlos a un técnico y actualizar su estado. No puedo mostrar aquí datos privados de usuarios.',
+                'administrador', 'superusuario' => 'Desde el panel puedes revisar tickets, asignarlos a un técnico y actualizar su estado. No puedo mostrar aquí datos privados de usuarios.',
                 'tecnico' => 'Desde tu panel puedes revisar tus asignaciones, actualizar el estado de los tickets y consultar el historial autorizado. No puedo mostrar datos privados de otros usuarios.',
                 'cliente', 'aliado' => 'Puedes crear y consultar tus tickets desde el panel de soporte. Para ver información concreta de un ticket, revisa tu cuenta autenticada.',
                 default => 'Los tickets de soporte están disponibles para usuarios registrados. Inicia sesión para crear o consultar tus solicitudes.',
@@ -245,7 +245,7 @@ class ChatbotController extends Controller
 
         if (str_contains($question, 'factura') || str_contains($question, 'pago')) {
             return match ($role) {
-                'administrador' => 'El panel de administrador permite revisar la información general de facturación. No mostraré datos privados de usuarios en este chat.',
+                'administrador', 'superusuario' => 'El panel de administración permite revisar la información general de facturación. No mostraré datos privados de usuarios en este chat.',
                 'cliente', 'aliado' => 'Puedes consultar tus facturas y pagos desde tu panel autenticado. El chatbot no puede confirmar saldos individuales.',
                 default => 'Para consultar facturas o pagos necesitas iniciar sesión en tu cuenta de AsoTV.',
             };
@@ -256,7 +256,7 @@ class ChatbotController extends Controller
         }
 
         return match ($role) {
-            'administrador' => 'Puedo ayudarte con la gestión general de usuarios, tickets, roles y servicios de AsoTV, sin mostrar contraseñas ni datos privados.',
+            'administrador', 'superusuario' => 'Puedo ayudarte con la gestión general de usuarios, tickets, roles, asignaciones y servicios de AsoTV, sin mostrar contraseñas ni datos privados.',
             'tecnico' => 'Puedo ayudarte con la atención técnica, asignaciones, estados e historial de tickets, sin mostrar datos privados de otros usuarios.',
             'cliente', 'aliado' => 'Puedo ayudarte con tu cuenta, inicio de sesión, registro, planes, precios, televisión, internet, instalación, cobertura y soporte de AsoTV.',
             default => 'Puedo ayudarte con AsoTV —inicio de sesión, registro, planes, televisión, internet y soporte— o con la reflexión transhumanista sobre aprendizaje e interacción tecnológica documentada para este proyecto.',
@@ -340,7 +340,7 @@ class ChatbotController extends Controller
 
         if (str_contains($question, 'role') && (str_contains($question, 'what') || str_contains($question, 'my role'))) {
             return match ($role) {
-                'administrador' => 'Your administrator role lets you manage users, roles, account statuses, tickets, assignments, and AsoTV reports. I cannot show passwords or private information in this chat.',
+                'administrador', 'superusuario' => 'Your role lets you manage users, roles, account statuses, tickets, assignments, and AsoTV reports, as well as use technical and customer functions. I cannot show passwords or private information in this chat.',
                 'tecnico' => 'Your technician role lets you view your assignments, update statuses, and review authorized service history. You cannot access other users’ private information.',
                 'cliente', 'aliado' => 'Your role lets you view your services, invoices, tickets, plans, and support. For specific account information, use the options in your authenticated dashboard.',
                 default => 'As a visitor, you can learn about AsoTV plans, services, contact options, registration, and sign-in. Private features require an authenticated account.',
@@ -397,7 +397,7 @@ class ChatbotController extends Controller
 
         if (str_contains($question, 'ticket') || str_contains($question, 'assignment')) {
             return match ($role) {
-                'administrador' => 'In the administrator panel, you can review tickets, assign them to a technician, and update their status. I cannot show users’ private information here.',
+                'administrador', 'superusuario' => 'In the administration panel, you can review tickets, assign them to a technician, and update their status. I cannot show users’ private information here.',
                 'tecnico' => 'In your panel, you can review your assignments, update ticket statuses, and view authorized history. I cannot show other users’ private information.',
                 'cliente', 'aliado' => 'You can create and view your tickets in the support panel. To see details about a specific ticket, check your authenticated account.',
                 default => 'Support tickets are available to registered users. Sign in to create or view your requests.',
@@ -406,7 +406,7 @@ class ChatbotController extends Controller
 
         if (str_contains($question, 'invoice') || str_contains($question, 'bill') || str_contains($question, 'payment')) {
             return match ($role) {
-                'administrador' => 'The administrator panel provides access to general billing information. I will not show users’ private information in this chat.',
+                'administrador', 'superusuario' => 'The administration panel provides access to general billing information. I will not show users’ private information in this chat.',
                 'cliente', 'aliado' => 'You can view your invoices and payments in your authenticated dashboard. The chatbot cannot confirm individual balances.',
                 default => 'You need to sign in to your AsoTV account to view invoices or payments.',
             };
@@ -417,7 +417,7 @@ class ChatbotController extends Controller
         }
 
         return match ($role) {
-            'administrador' => 'I can help with general management of AsoTV users, tickets, roles, and services, without showing passwords or private information.',
+            'administrador', 'superusuario' => 'I can help with general management of AsoTV users, tickets, roles, assignments, and services, without showing passwords or private information.',
             'tecnico' => 'I can help with technical support, assignments, statuses, and authorized ticket history, without showing other users’ private information.',
             'cliente', 'aliado' => 'I can help with your account, sign-in, registration, plans, prices, television, internet, installation, coverage, and AsoTV support.',
             default => 'I can help with AsoTV—sign-in, registration, plans, television, internet, and support—or with the transhumanist reflection on learning and technological interaction documented for this project.',
@@ -460,7 +460,7 @@ class ChatbotController extends Controller
             return 'Profile panel: users can review and update their personal information, password, and profile photo.';
         }
 
-        if ($role === 'administrador') {
+        if (in_array($role, ['administrador', 'superusuario'], true)) {
             return 'This AsoTV panel supports general administration. I can help with users, tickets, roles, and services without showing private information.';
         }
 
@@ -569,7 +569,7 @@ class ChatbotController extends Controller
             return 'Página de descarga: el usuario puede consultar y descargar la aplicación móvil de AsoTV cuando los archivos estén disponibles.';
         }
 
-        if ($role === 'administrador') {
+        if (in_array($role, ['administrador', 'superusuario'], true)) {
             return 'Panel actual de AsoTV para administración general; puedo orientarte sobre usuarios, tickets, roles y servicios sin mostrar datos privados.';
         }
 
@@ -592,6 +592,7 @@ class ChatbotController extends Controller
     {
         return match ($this->currentRole()) {
             'administrador' => 'PERMISOS DEL ADMINISTRADOR: Puede recibir orientación general sobre usuarios, roles, tickets, asignaciones y reportes. No muestres listados, correos, contraseñas, tokens ni datos privados; esos datos solo se consultan dentro del panel autorizado.',
+            'superusuario' => 'PERMISOS DEL SUPERUSUARIO: Puede recibir orientación sobre las funciones administrativas, técnicas y de usuario. No muestres listados, correos, contraseñas, tokens ni datos privados; esos datos solo se consultan dentro del panel autorizado.',
             'tecnico' => 'PERMISOS DEL TECNICO: Puede recibir orientación sobre asignaciones, estados, historial y atención de tickets. No muestres información privada, credenciales ni tickets de otros usuarios que no estén autorizados en su panel.',
             'cliente', 'aliado' => 'PERMISOS DEL CLIENTE: Puede recibir orientación sobre su cuenta, servicios, facturas, tickets, planes y soporte. No afirmes datos de su cuenta, pagos o tickets porque el chatbot no consulta esos registros; indícale que los revise en su panel.',
             default => 'PERMISOS DEL VISITANTE: Puede recibir información pública sobre AsoTV y sobre la reflexión transhumanista documentada para este proyecto. No tiene acceso a información privada de cuentas, facturas, tickets, usuarios ni administración.',

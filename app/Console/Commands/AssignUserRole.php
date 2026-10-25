@@ -19,7 +19,7 @@ class AssignUserRole extends Command
      *
      * @var string
      */
-    protected $description = 'Asigna un rol a un usuario. Roles disponibles: cliente, administrador, tecnico';
+    protected $description = 'Asigna un rol a un usuario. Roles disponibles: cliente, aliado, tecnico, administrador, superusuario';
 
     /**
      * Execute the console command.
@@ -30,7 +30,7 @@ class AssignUserRole extends Command
         $role = $this->argument('role');
 
         // Validar que el rol sea válido
-        $validRoles = ['cliente', 'administrador', 'tecnico'];
+        $validRoles = ['cliente', 'aliado', 'administrador', 'tecnico', 'superusuario'];
         if (!in_array($role, $validRoles)) {
             $this->error('Rol inválido. Roles disponibles: ' . implode(', ', $validRoles));
             return Command::FAILURE;

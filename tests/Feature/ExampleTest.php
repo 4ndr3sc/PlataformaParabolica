@@ -71,6 +71,57 @@ class ExampleTest extends TestCase
         $this->get('/tecnico/historial')->assertOk();
     }
 
+    public function test_superusuario_can_use_administrator_and_technician_features(): void
+    {
+        $superuser = User::factory()->create(['role' => 'superusuario']);
+        $ticket = \App\Models\Ticket::create([
+            'user_id' => User::factory()->create()->id,
+            'ticket_number' => 'TK-SUPERUSER-001',
+            'type' => 'peticion',
+            'subject' => 'Ticket para superusuario',
+            'description' => 'Debe poder asignarse a un superusuario.',
+            'priority' => 'alta',
+            'status' => 'abierto',
+        ]);
+
+        $this->actingAs($superuser);
+
+        $this->get('/dashboard')
+            ->assertOk()
+            ->assertSee('Control de accesos')
+            ->assertSee('Asignaciones')
+            ->assertSee('Mis facturas')
+            ->assertSee('Actualizar estados')
+            ->assertSee('Reportes y analítica')
+            ->assertSee('border-t border-slate-300', false);
+
+        $this->get('/tecnico/asignaciones')
+            ->assertOk()
+            ->assertSee('Mis facturas')
+            ->assertSee('Control de accesos')
+            ->assertSee('Asignaciones');
+
+        $this->get('/admin/dashboard')
+            ->assertOk()
+            ->assertSee('Superusuario')
+            ->assertSee('Funciones de usuario')
+            ->assertSee('Funciones de técnico')
+            ->assertSee('border-l border-slate-300', false);
+
+        $this->get('/admin/tickets/asignar')
+            ->assertOk()
+            ->assertSee('Asignaciones')
+            ->assertSee('Mis facturas');
+
+        $this->post('/admin/tickets/' . $ticket->id . '/assign', [
+            'technician_id' => $superuser->id,
+        ])->assertRedirect('/admin/tickets/asignar');
+
+        $this->get('/tecnico/asignaciones')
+            ->assertOk()
+            ->assertSee($ticket->ticket_number);
+    }
+
     public function test_technician_only_sees_assigned_tickets(): void
     {
         $assignedTechnician = User::factory()->create(['role' => 'tecnico']);
@@ -121,6 +172,9 @@ class ExampleTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Control de validación');
+        $response->assertSee('Usuarios y roles');
+        $response->assertSee('Asignar técnico');
+        $response->assertSee('Reportes');
         $response->assertSee('Vendidas');
         $response->assertSee('Disponibles');
         $response->assertSee('Utilizadas');
@@ -143,6 +197,8 @@ class ExampleTest extends TestCase
 
         $reportResponse = $this->get('/admin/reportes');
         $reportResponse->assertOk();
+        $reportResponse->assertSee('Usuarios y roles');
+        $reportResponse->assertSee('Validación');
         $reportResponse->assertSee('Informes periódicos');
         $reportResponse->assertSee('Rendimiento de ventas');
         $reportResponse->assertSee('Uso de boletos');
@@ -184,6 +240,15 @@ class ExampleTest extends TestCase
             'role' => 'tecnico',
         ]);
 
+        $this->post('/admin/users/' . $user->id . '/update-role', [
+            'role' => 'superusuario',
+        ])->assertRedirect('/admin/dashboard');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'role' => 'superusuario',
+        ]);
+
         $this->post('/admin/users/' . $user->id . '/toggle-status')
             ->assertRedirect('/admin/dashboard');
 
@@ -214,7 +279,10 @@ class ExampleTest extends TestCase
         $dashboardResponse->assertSee('Asignar técnico');
         $dashboardResponse->assertDontSee('Asignar ticket');
 
-        $this->get('/admin/tickets/asignar')->assertOk();
+        $this->get('/admin/tickets/asignar')
+            ->assertOk()
+            ->assertSee('Usuarios y roles')
+            ->assertSee('Reportes');
 
         $this->post('/admin/tickets/' . $ticket->id . '/assign', [
             'technician_id' => $technician->id,
