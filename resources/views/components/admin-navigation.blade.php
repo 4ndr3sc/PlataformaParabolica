@@ -1,5 +1,6 @@
 @php
     $navigationLinks = [
+        ['label' => 'Volver al dashboard', 'url' => '/dashboard', 'icon' => 'fas fa-arrow-left'],
         ['label' => 'Usuarios y roles', 'url' => '/admin/dashboard', 'icon' => 'fas fa-user-shield'],
         ['label' => 'Asignar técnico', 'url' => '/admin/tickets/asignar', 'icon' => 'fas fa-user-plus'],
         ['label' => 'Validación', 'url' => '/admin/validacion', 'icon' => 'fas fa-clipboard-check'],

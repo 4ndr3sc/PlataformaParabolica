@@ -276,6 +276,8 @@ class ExampleTest extends TestCase
 
         $dashboardResponse = $this->get('/admin/dashboard');
         $dashboardResponse->assertOk();
+        $dashboardResponse->assertSee('Volver al dashboard');
+        $dashboardResponse->assertSee('href="' . url('/dashboard') . '"', false);
         $dashboardResponse->assertSee('Asignar técnico');
         $dashboardResponse->assertDontSee('Asignar ticket');
 
