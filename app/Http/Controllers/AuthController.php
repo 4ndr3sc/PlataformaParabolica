@@ -24,12 +24,14 @@ class AuthController extends Controller
             'name' => $request->name . ' ' . $request->lastname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'cliente',
         ]);
 
         // 3. Iniciar sesión automáticamente (Sistema nativo)
         Auth::login($user);
+        $request->session()->regenerate();
 
-        return redirect('/dashboard');
+        return redirect()->intended('/dashboard');
     }
 
     public function login(Request $request)

@@ -82,6 +82,46 @@
             </div>
         </header>
 
+        @if (session('success'))
+            <div class="mb-6 rounded-xl border border-green-300 bg-green-100 px-4 py-3 text-green-700">{{ session('success') }}</div>
+        @endif
+        @if ($errors->any())
+            <div class="mb-6 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-red-700">
+                <ul class="list-inside list-disc">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+            </div>
+        @endif
+
+        @if(Auth::user()->isAdministrator())
+            <section class="mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+                <h2 class="mb-2 text-xl font-bold">Generar factura</h2>
+                <p class="mb-5 text-sm text-slate-600">El valor y el plan se toman del plan que el cliente seleccionó en la sección Planes.</p>
+                <form method="POST" action="{{ route('admin.invoices.store') }}" class="grid grid-cols-1 items-end gap-4 md:grid-cols-3">
+                    @csrf
+                    <label class="block text-sm font-bold text-slate-700">
+                        Cliente y plan seleccionado
+                        <select name="user_id" required class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3">
+                            <option value="">Selecciona un cliente</option>
+                            @foreach($all_users as $customer)
+                                @if(isset($catalog[$customer->selected_plan]))
+                                    <option value="{{ $customer->id }}" {{ (string) old('user_id') === (string) $customer->id ? 'selected' : '' }}>
+                                        {{ $customer->name }} — {{ $catalog[$customer->selected_plan]['name'] }} (${{ number_format($catalog[$customer->selected_plan]['amount'], 0, ',', '.') }})
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </label>
+                    <label class="block text-sm font-bold text-slate-700">
+                        Período facturado
+                        <input type="month" name="billing_period" value="{{ old('billing_period', now()->format('Y-m')) }}" required class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3">
+                    </label>
+                    <button type="submit" class="rounded-xl bg-blue-600 px-5 py-3 font-bold text-white hover:bg-blue-700">Crear factura</button>
+                </form>
+                @if($all_users->whereNull('selected_plan')->isNotEmpty())
+                    <p class="mt-4 text-sm text-amber-700">Los clientes sin plan seleccionado no se pueden facturar. Pídeles que elijan uno desde Planes.</p>
+                @endif
+            </section>
+        @endif
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             @if(Auth::check() && Auth::user()->isAdministrator())
                 <div onclick="showList('all')" class="cursor-pointer bg-white p-6 rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
@@ -110,13 +150,17 @@
             @else
                 <div class="bg-white p-6 rounded-3xl border-b-4 border-green-500 shadow-lg border border-slate-200">
                     <p class="text-slate-600 text-sm font-bold uppercase mb-2">Total Pagado</p>
-                    <h3 class="text-2xl font-black text-slate-900">$ 191.600</h3>
-                    <p class="text-green-600 text-xs mt-2 font-bold uppercase">Año 2026</p>
+                    <h3 class="text-2xl font-black text-slate-900">$ {{ number_format($paid_total, 0, ',', '.') }}</h3>
+                    <p class="text-green-600 text-xs mt-2 font-bold uppercase">Facturas registradas</p>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border-b-4 border-yellow-500 shadow-lg border border-slate-200">
                     <p class="text-slate-600 text-sm font-bold uppercase mb-2">Próximo Pago</p>
-                    <h3 class="text-2xl font-black text-slate-900">$ 47.900</h3>
-                    <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">Vence en 27 días</p>
+                    <h3 class="text-2xl font-black text-slate-900">
+                        {{ $next_invoice ? '$ ' . number_format($next_invoice->amount, 0, ',', '.') : 'Sin pendientes' }}
+                    </h3>
+                    <p class="text-yellow-600 text-xs mt-2 font-bold uppercase">
+                        {{ $next_invoice ? 'Vence el ' . $next_invoice->due_date->format('d/m/Y') : 'No tienes facturas pendientes' }}
+                    </p>
                 </div>
             @endif
 
@@ -256,69 +300,49 @@
             @endif
         </div>
 
-        @if(!(Auth::check() && Auth::user()->isAdministrator()) || Auth::user()->isSuperuser())
-            <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-slate-200">
+        <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-slate-200">
                 <div class="p-6 border-b border-slate-200">
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Facturas Recientes</h2>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">{{ Auth::user()->isAdministrator() ? 'Facturas generadas' : 'Mis facturas' }}</h2>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-slate-100">
                             <tr>
                                 <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Número</th>
+                                @if(Auth::user()->isAdministrator())
+                                    <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Cliente</th>
+                                @endif
+                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Plan</th>
                                 <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Fecha</th>
                                 <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Período</th>
                                 <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Valor</th>
                                 <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Estado</th>
-                                <th class="px-6 py-4 text-left text-slate-600 font-bold uppercase text-xs">Acción</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200">
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-900 font-bold">#2026-001</td>
-                                <td class="px-6 py-4 text-slate-600">01/05/2026</td>
-                                <td class="px-6 py-4 text-slate-600">Mayo 2026</td>
-                                <td class="px-6 py-4 text-slate-900 font-bold">$ 47.900</td>
-                                <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold">Pendiente</span></td>
-                                <td class="px-6 py-4"><a href="#" class="text-blue-600 hover:text-blue-700 font-bold"><i class="fas fa-download"></i></a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-900 font-bold">#2026-002</td>
-                                <td class="px-6 py-4 text-slate-600">01/04/2026</td>
-                                <td class="px-6 py-4 text-slate-600">Abril 2026</td>
-                                <td class="px-6 py-4 text-slate-900 font-bold">$ 47.900</td>
-                               <td class="px-6 py-4"><span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">Pagada</span></td>
-                                <td class="px-6 py-4"><a href="#" class="text-blue-600 hover:text-blue-700 font-bold"><i class="fas fa-download"></i></a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-900 font-bold">#2026-003</td>
-                                <td class="px-6 py-4 text-slate-600">01/03/2026</td>
-                                <td class="px-6 py-4 text-slate-600">Marzo 2026</td>
-                                <td class="px-6 py-4 text-slate-900 font-bold">$ 47.900</td>
-                                <td class="px-6 py-4"><span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">Pagada</span></td>
-                                <td class="px-6 py-4"><a href="#" class="text-blue-600 hover:text-blue-700 font-bold"><i class="fas fa-download"></i></a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-900 font-bold">#2026-004</td>
-                                <td class="px-6 py-4 text-slate-600">01/02/2026</td>
-                                <td class="px-6 py-4 text-slate-600">Febrero 2026</td>
-                                <td class="px-6 py-4 text-slate-900 font-bold">$ 47.900</td>
-                                <td class="px-6 py-4"><span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">Pagada</span></td>
-                                <td class="px-6 py-4"><a href="#" class="text-blue-600 hover:text-blue-700 font-bold"><i class="fas fa-download"></i></a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-900 font-bold">#2026-005</td>
-                                <td class="px-6 py-4 text-slate-600">01/01/2026</td>
-                                <td class="px-6 py-4 text-slate-600">Enero 2026</td>
-                                <td class="px-6 py-4 text-slate-900 font-bold">$ 47.900</td>
-                                <td class="px-6 py-4"><span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">Pagada</span></td>
-                                <td class="px-6 py-4"><a href="#" class="text-blue-600 hover:text-blue-700 font-bold"><i class="fas fa-download"></i></a></td>
-                            </tr>
+                            @forelse($invoices as $invoice)
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 font-bold text-slate-900">{{ $invoice->invoice_number }}</td>
+                                    @if(Auth::user()->isAdministrator())
+                                        <td class="px-6 py-4 text-slate-600">{{ $invoice->user->name }}</td>
+                                    @endif
+                                    <td class="px-6 py-4 text-slate-600">{{ $invoice->plan_name }}</td>
+                                    <td class="px-6 py-4 text-slate-600">{{ $invoice->date->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-slate-600">{{ $invoice->billing_period->format('m/Y') }}</td>
+                                    <td class="px-6 py-4 font-bold text-slate-900">$ {{ number_format($invoice->amount, 0, ',', '.') }}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="{{ $invoice->status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }} rounded-full px-3 py-1 text-xs font-bold">
+                                            {{ $invoice->status === 'paid' ? 'Pagada' : 'Pendiente' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="{{ Auth::user()->isAdministrator() ? 7 : 6 }}" class="px-6 py-10 text-center text-slate-500">Aún no hay facturas registradas.</td></tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
-            </div>
-        @endif
+        </div>
     </main>
 
     <script src="{{ asset('js/profile-photo-upload.js') }}"></script>

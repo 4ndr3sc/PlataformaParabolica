@@ -2,6 +2,8 @@
     $navigationLinks = [
         ['label' => 'Volver al dashboard', 'url' => '/dashboard', 'icon' => 'fas fa-arrow-left'],
         ['label' => 'Usuarios y roles', 'url' => '/admin/dashboard', 'icon' => 'fas fa-user-shield'],
+        ['label' => 'Facturación', 'url' => '/facturas', 'icon' => 'fas fa-file-invoice-dollar'],
+        ['label' => 'Solicitudes de servicio', 'url' => '/mis-servicios', 'icon' => 'fas fa-concierge-bell'],
         ['label' => 'Asignar técnico', 'url' => '/admin/tickets/asignar', 'icon' => 'fas fa-user-plus'],
         ['label' => 'Validación', 'url' => '/admin/validacion', 'icon' => 'fas fa-clipboard-check'],
         ['label' => 'Reportes', 'url' => '/admin/reportes', 'icon' => 'fas fa-chart-line'],

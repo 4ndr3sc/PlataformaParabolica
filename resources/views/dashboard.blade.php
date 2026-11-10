@@ -80,6 +80,11 @@
                         <i class="fas fa-file-invoice-dollar"></i> <span>Mis Facturas</span>
                     </a>
                 @endif
+                @if(Auth::user()->role === 'cliente')
+                    <a href="{{ route('services.index') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                        <i class="fas fa-concierge-bell"></i> <span>Mis servicios</span>
+                    </a>
+                @endif
 
                 @if(Auth::user()->role === 'tecnico' || Auth::user()->isSuperuser())
                     <a href="{{ url('/tecnico/asignaciones') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
@@ -115,6 +120,9 @@
                         </a>
                         <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                             <i class="fas fa-user-shield"></i> <span>Control de accesos</span>
+                        </a>
+                        <a href="{{ url('/facturas') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
+                            <i class="fas fa-file-invoice-dollar"></i> <span>Facturación</span>
                         </a>
                         <a href="{{ url('/admin/tickets/asignar') }}" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded-xl transition-all">
                             <i class="fas fa-user-plus"></i> <span>Asignar técnico</span>

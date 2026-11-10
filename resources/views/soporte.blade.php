@@ -108,6 +108,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if ($errors->any())
+            <div class="mb-6 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-red-700">
+                <ul class="list-inside list-disc">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+            </div>
+        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div class="bg-white p-6 rounded-3xl border-b-4 border-blue-500 shadow-lg border border-slate-200">
@@ -188,6 +193,43 @@
                                     </td>
                                     <td class="px-6 py-4 text-slate-600 text-sm">
                                         {{ $ticket->created_at ? $ticket->created_at->format('d/m/Y') : 'N/A' }}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200 bg-slate-50">
+                                    <td colspan="6" class="px-6 py-5">
+                                        <p class="mb-2 text-sm font-bold text-slate-700">Descripción enviada</p>
+                                        <p class="whitespace-pre-line text-sm text-slate-600">{{ $ticket->description }}</p>
+                                        @if($ticket->technician_comment)
+                                            <div class="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+                                                <p class="mb-1 text-sm font-bold text-blue-800">Reporte del técnico sobre la visita/parabólica</p>
+                                                <p class="whitespace-pre-line text-sm text-blue-900">{{ $ticket->technician_comment }}</p>
+                                                @if($ticket->technician_photo)
+                                                    <a href="{{ asset('storage/' . $ticket->technician_photo) }}" target="_blank" rel="noopener" class="mt-3 inline-block">
+                                                        <img src="{{ asset('storage/' . $ticket->technician_photo) }}" alt="Foto del reporte técnico" class="max-h-48 rounded-lg border border-blue-200">
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endif
+
+                                        @if(!in_array($ticket->status, ['resuelto', 'cerrado'], true))
+                                            <form method="POST" action="{{ route('tickets.update-information', $ticket) }}" class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                <label class="text-xs font-bold uppercase text-slate-600">
+                                                    Asunto
+                                                    <input name="subject" required maxlength="255" value="{{ old('subject', $ticket->subject) }}" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm normal-case">
+                                                </label>
+                                                <label class="text-xs font-bold uppercase text-slate-600 md:col-span-2">
+                                                    Editar o agregar información a la PQR
+                                                    <textarea name="description" rows="4" required minlength="20" maxlength="10000" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal normal-case">{{ old('description', $ticket->description) }}</textarea>
+                                                </label>
+                                                <div class="md:col-span-2">
+                                                    <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">Guardar cambios</button>
+                                                </div>
+                                            </form>
+                                        @else
+                                            <p class="mt-4 text-xs text-slate-500">Esta PQR está cerrada y ya no se puede editar.</p>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

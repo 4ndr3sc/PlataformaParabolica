@@ -75,6 +75,11 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if ($errors->any())
+                <div class="mx-6 mt-6 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-red-700">
+                    <ul class="list-inside list-disc">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                </div>
+            @endif
 
             @if($tickets && $tickets->count() > 0)
                 <div class="overflow-x-auto">
@@ -145,6 +150,37 @@
                                             </form>
                                         </td>
                                     @endif
+                                </tr>
+                                <tr class="border-b border-slate-200 bg-slate-50">
+                                    <td colspan="6" class="px-6 py-5">
+                                        @if($ticket->technician_comment)
+                                            <div class="mb-4">
+                                                <p class="text-sm font-bold text-slate-700">Último reporte sobre la parabólica</p>
+                                                <p class="mt-1 whitespace-pre-line text-sm text-slate-600">{{ $ticket->technician_comment }}</p>
+                                                @if($ticket->technician_photo)
+                                                    <a href="{{ asset('storage/' . $ticket->technician_photo) }}" target="_blank" rel="noopener" class="mt-3 inline-block">
+                                                        <img src="{{ asset('storage/' . $ticket->technician_photo) }}" alt="Foto del estado de la parabólica" class="max-h-40 rounded-lg border border-slate-300">
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endif
+                                        @if($section !== 'historial')
+                                            <form method="POST" enctype="multipart/form-data" action="{{ url('/tecnico/tickets/' . $ticket->id . '/comentario') }}" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                                @csrf
+                                                <label class="text-xs font-bold uppercase text-slate-600 md:col-span-2">
+                                                    Comentario del estado de la parabólica
+                                                    <textarea name="technician_comment" rows="3" maxlength="5000" required class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal normal-case" placeholder="Describe la señal, alineación, cableado u observaciones de la visita"></textarea>
+                                                </label>
+                                                <label class="text-xs font-bold uppercase text-slate-600">
+                                                    Foto (opcional, máximo 5 MB)
+                                                    <input type="file" name="technician_photo" accept="image/jpeg,image/png,image/webp" class="mt-2 block w-full text-sm font-normal normal-case">
+                                                </label>
+                                                <div class="flex items-end">
+                                                    <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">Enviar reporte</button>
+                                                </div>
+                                            </form>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

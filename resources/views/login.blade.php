@@ -30,6 +30,12 @@
             <h2 class="text-2xl font-extrabold text-slate-800 mt-4 uppercase tracking-tight">Acceso Clientes</h2>
             <p class="text-slate-500 text-sm italic">Ingresa para gestionar tus servicios</p>
         </div>
+        @if (session('status'))
+            <div class="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">{{ session('status') }}</div>
+        @endif
+        @if ($errors->any())
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{{ $errors->first() }}</div>
+        @endif
         
         <form action="{{ url('/login') }}" method="POST" class="mt-8 space-y-5">
             @csrf 

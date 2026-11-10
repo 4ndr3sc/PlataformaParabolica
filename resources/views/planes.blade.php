@@ -30,6 +30,9 @@
 
     <header class="bg-brand-blue py-16 text-white text-center">
         <div class="container mx-auto px-6">
+            @if(Auth::check() && Auth::user()->role === 'cliente')
+                <a href="{{ route('services.index') }}" class="mb-6 inline-flex rounded-xl border border-blue-200 bg-white px-5 py-3 font-bold text-blue-700 shadow-sm hover:bg-blue-50">Ver mis servicios solicitados</a>
+            @endif
             <h1 class="text-5xl font-extrabold uppercase tracking-tighter">Planes <span class="text-yellow-400">Disponibles</span></h1>
             <p class="mt-4 text-blue-100 text-xl max-w-2xl mx-auto italic">Elige el plan que mejor se adapte a tus necesidades</p>
         </div>
@@ -37,6 +40,12 @@
 
     <section class="py-20">
         <div class="container mx-auto px-6">
+            @if (session('success'))
+                <div class="mb-8 rounded-xl border border-green-300 bg-green-50 px-4 py-3 text-green-800">{{ session('success') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="mb-8 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-red-800">{{ $errors->first() }}</div>
+            @endif
             <!-- Planes Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <!-- Plan 1: Solo WiFi -->
@@ -68,9 +77,7 @@
 
                     <div class="border-t border-slate-200 pt-6">
                         <p class="text-blue-600 text-3xl font-black mb-4">$47.900</p>
-                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg">
-                            Solicitar Plan
-                        </button>
+                        @include('components.plan-selection-button', ['planKey' => 'solo_wifi', 'buttonClass' => 'bg-blue-600 hover:bg-blue-700'])
                     </div>
                 </div>
             </div>
@@ -104,9 +111,7 @@
 
                     <div class="border-t border-slate-200 pt-6">
                         <p class="text-orange-600 text-3xl font-black mb-4">$27.000</p>
-                        <button class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg">
-                            Solicitar Plan
-                        </button>
+                        @include('components.plan-selection-button', ['planKey' => 'solo_television', 'buttonClass' => 'bg-orange-600 hover:bg-orange-700'])
                     </div>
                 </div>
             </div>
@@ -148,9 +153,7 @@
 
                     <div class="border-t border-slate-200 pt-6">
                         <p class="text-blue-600 text-3xl font-black mb-4">$74.900</p>
-                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg">
-                            Solicitar Plan
-                        </button>
+                        @include('components.plan-selection-button', ['planKey' => 'wifi_tv', 'buttonClass' => 'bg-blue-600 hover:bg-blue-700'])
                     </div>
                 </div>
             </div>

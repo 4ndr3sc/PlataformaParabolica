@@ -29,6 +29,7 @@ class User extends Authenticatable
         'department',
         'profile_photo',
         'role',
+        'selected_plan',
         'is_active',
     ];
 
@@ -58,6 +59,16 @@ class User extends Authenticatable
     public function chatbotInteractions()
     {
         return $this->hasMany(ChatbotInteraction::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function serviceRequests()
+    {
+        return $this->hasMany(ServiceRequest::class);
     }
 
     public function isSuperuser(): bool

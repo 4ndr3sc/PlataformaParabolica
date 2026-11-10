@@ -7,6 +7,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\ServiceRequestController;
 use Illuminate\Support\Facades\Auth;
 
 // --- Rutas públicas ---
@@ -25,6 +28,8 @@ Route::get('/planes', function () {
 Route::post('/chatbot/reply', [ChatbotController::class, 'reply'])
     ->middleware('throttle:20,1')
     ->name('chatbot.reply');
+Route::get('/planes/solicitar/{plan}', [PlanController::class, 'beginRequest'])
+    ->name('plans.begin-request');
 
 // Ruta de diagnóstico del storage
 Route::get('/storage-fix', function () {
@@ -141,117 +146,10 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard', ['user' => $user, 'tickets' => $tickets, 'users' => $users ?? null, 'totalTickets' => $totalTickets ?? 0, 'openTickets' => $openTickets ?? 0, 'unresolvedTickets' => $unresolvedTickets ?? 0]);
     });
 
-    Route::get('/facturas', function () {
-        $user = Auth::user();
-
-        // Métricas para administradores sobre pagos
-        $paid_this_month = 0;
-        $unpaid_this_month = 0;
-        $unpaid_previous_months = 0;
-        $total_users = 0;
-
-        // Listas por defecto (vacías) para evitar errores en la vista cuando no existen
-        $paid_users_this_month = collect();
-        $unpaid_users_this_month = collect();
-        $unpaid_users_previous_months = collect();
-        $all_users = collect();
-
-        if ($user && $user->isAdministrator()) {
-            try {
-                $total_users = \App\Models\User::count();
-
-                // Usamos consultas directas a la tabla 'invoices' si existe
-                if (\Schema::hasTable('invoices')) {
-                    $now = \Carbon\now();
-                    $month = $now->month;
-                    $year = $now->year;
-
-                    // Usuarios que tienen al menos una factura pagada este mes
-                    $paid_this_month = \DB::table('invoices')
-                        ->whereMonth('date', $month)
-                        ->whereYear('date', $year)
-                        ->where('status', 'paid')
-                        ->distinct('user_id')
-                        ->count('user_id');
-
-                    // Usuarios con factura pendiente este mes
-                    $unpaid_this_month = \DB::table('invoices')
-                        ->whereMonth('date', $month)
-                        ->whereYear('date', $year)
-                        ->whereIn('status', ['pending', 'unpaid'])
-                        ->distinct('user_id')
-                        ->count('user_id');
-
-                    // Usuarios que no han pagado en meses anteriores (tienen facturas pendientes en meses previos)
-                    $unpaid_previous_months = \DB::table('invoices')
-                        ->where(function ($q) use ($month, $year) {
-                            $q->whereYear('date', '<', $year)
-                              ->orWhere(function($q2) use ($month, $year) {
-                                  $q2->whereYear('date', $year)->whereMonth('date', '<', $month);
-                              });
-                        })
-                        ->whereIn('status', ['pending', 'unpaid'])
-                        ->distinct('user_id')
-                        ->count('user_id');
-
-                    // Además, obtener listados de usuarios por categoría (limitados)
-                    $paid_users_this_month = collect();
-                    $unpaid_users_this_month = collect();
-                    $unpaid_users_previous_months = collect();
-
-                    $limit = 1000;
-
-                    $paid_users_this_month = \DB::table('invoices')
-                        ->join('users', 'invoices.user_id', '=', 'users.id')
-                        ->whereMonth('invoices.date', $month)
-                        ->whereYear('invoices.date', $year)
-                        ->where('invoices.status', 'paid')
-                        ->select('users.id', 'users.name', 'users.email', 'users.phone')
-                        ->distinct('users.id')
-                        ->limit($limit)
-                        ->get();
-
-                    $unpaid_users_this_month = \DB::table('invoices')
-                        ->join('users', 'invoices.user_id', '=', 'users.id')
-                        ->whereMonth('invoices.date', $month)
-                        ->whereYear('invoices.date', $year)
-                        ->whereIn('invoices.status', ['pending', 'unpaid'])
-                        ->select('users.id', 'users.name', 'users.email', 'users.phone')
-                        ->distinct('users.id')
-                        ->limit($limit)
-                        ->get();
-
-                    $unpaid_users_previous_months = \DB::table('invoices')
-                        ->join('users', 'invoices.user_id', '=', 'users.id')
-                        ->where(function ($q) use ($month, $year) {
-                            $q->whereYear('invoices.date', '<', $year)
-                              ->orWhere(function($q2) use ($month, $year) {
-                                  $q2->whereYear('invoices.date', $year)->whereMonth('invoices.date', '<', $month);
-                              });
-                        })
-                        ->whereIn('invoices.status', ['pending', 'unpaid'])
-                        ->select('users.id', 'users.name', 'users.email', 'users.phone')
-                        ->distinct('users.id')
-                        ->limit($limit)
-                        ->get();
-
-                    // Lista completa (limitada) de usuarios
-                    $all_users = \App\Models\User::select('id','name','email','phone')->limit($limit)->get();
-                }
-            } catch (\Exception $e) {
-                // Si no existe la tabla o hay error, dejamos los valores en 0
-                $paid_this_month = 0;
-                $unpaid_this_month = 0;
-                $unpaid_previous_months = 0;
-                $paid_users_this_month = collect();
-                $unpaid_users_this_month = collect();
-                $unpaid_users_previous_months = collect();
-                $all_users = collect();
-            }
-        }
-
-        return view('facturas', compact('user', 'paid_this_month', 'unpaid_this_month', 'unpaid_previous_months', 'total_users', 'paid_users_this_month', 'unpaid_users_this_month', 'unpaid_users_previous_months', 'all_users'));
-    });
+    Route::get('/facturas', [InvoiceController::class, 'index'])->name('facturas');
+    Route::post('/planes/seleccionar', [PlanController::class, 'select'])->name('plans.select');
+    Route::get('/planes/confirmar', [PlanController::class, 'confirm'])->name('plans.confirm');
+    Route::get('/mis-servicios', [ServiceRequestController::class, 'index'])->name('services.index');
 
     // Ruta de Soporte (Única y protegida)
     Route::get('/soporte', function () {
@@ -311,6 +209,7 @@ Route::middleware(['auth'])->group(function () {
             $redirectTo = str_contains(url()->previous(), '/tecnico/estados') ? '/tecnico/estados' : '/tecnico/asignaciones';
             return redirect($redirectTo)->with('success', 'Estado del ticket actualizado correctamente.');
         });
+        Route::post('/tecnico/tickets/{id}/comentario', [TicketController::class, 'updateTechnicianReport']);
 
         Route::get('/tecnico/historial', function () {
             $tickets = \App\Models\Ticket::where('technician_id', Auth::id())->latest()->take(12)->get();
@@ -336,11 +235,14 @@ Route::middleware(['auth'])->group(function () {
     // Gestión de Tickets
     Route::get('/soporte/crear', [TicketController::class, 'showCreateForm']);
     Route::post('/ticket/crear', [TicketController::class, 'store']);
+    Route::patch('/tickets/{ticket}/informacion', [TicketController::class, 'updateInformation'])->name('tickets.update-information');
 
     // --- Rutas de Administración (Solo Administradores) ---
     Route::middleware('role:administrador')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::post('/admin/users', [AdminController::class, 'store'])->name('admin.store-user');
+        Route::post('/admin/facturas', [InvoiceController::class, 'store'])->name('admin.invoices.store');
+        Route::patch('/admin/solicitudes-servicio/{serviceRequest}', [ServiceRequestController::class, 'updateStatus'])->name('admin.service-requests.update');
         Route::get('/admin/users/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit-user');
         Route::post('/admin/users/{id}/update-role', [AdminController::class, 'updateRole'])->name('admin.update-role');
         Route::post('/admin/users/{id}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admin.toggle-status');

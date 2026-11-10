@@ -6,6 +6,7 @@
             'links' => [
                 ['label' => 'Resumen', 'url' => '/dashboard', 'icon' => 'fas fa-th-large'],
                 ['label' => 'Mis facturas', 'url' => '/facturas', 'icon' => 'fas fa-file-invoice-dollar'],
+                ['label' => 'Solicitudes de servicio', 'url' => '/mis-servicios', 'icon' => 'fas fa-concierge-bell'],
                 ['label' => 'Soporte técnico', 'url' => '/soporte', 'icon' => 'fas fa-tools'],
                 ['label' => 'Crear solicitud', 'url' => '/soporte/crear', 'icon' => 'fas fa-plus-circle'],
                 ['label' => 'Aplicación', 'url' => '/app/descargar', 'icon' => 'fas fa-mobile-alt'],

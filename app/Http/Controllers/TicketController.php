@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class TicketController extends Controller
@@ -71,5 +74,53 @@ class TicketController extends Controller
         }
 
         return redirect('/soporte')->with('error', 'No fue posible crear el ticket. Intenta nuevamente.');
+    }
+
+    public function updateInformation(Request $request, Ticket $ticket)
+    {
+        abort_unless($ticket->user_id === Auth::id(), 403);
+        abort_if(in_array($ticket->status, ['resuelto', 'cerrado'], true), 403, 'No puedes editar una PQR cerrada.');
+
+        $validated = $request->validate([
+            'subject' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'min:20', 'max:10000'],
+        ]);
+
+        $ticket->update($validated);
+
+        return redirect('/soporte')->with('success', 'La información de tu PQR fue actualizada.');
+    }
+
+    public function updateTechnicianReport(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'technician_comment' => ['required', 'string', 'max:5000'],
+            'technician_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+        ]);
+
+        $ticket = Ticket::where('id', $id)
+            ->where('technician_id', Auth::id())
+            ->firstOrFail();
+
+        $previousPhoto = $ticket->technician_photo;
+        if ($request->hasFile('technician_photo')) {
+            $newPhoto = $request->file('technician_photo')->store('ticket_reports', 'public');
+            if (!$newPhoto) {
+                throw new \RuntimeException('No fue posible guardar la foto del reporte técnico.');
+            }
+            $ticket->technician_photo = $newPhoto;
+        }
+
+        $ticket->technician_comment = $validated['technician_comment'];
+        $ticket->save();
+
+        if ($request->hasFile('technician_photo') && $previousPhoto && !Storage::disk('public')->delete($previousPhoto)) {
+            Log::warning('No se pudo eliminar la foto anterior del reporte técnico.', [
+                'ticket_id' => $ticket->id,
+                'photo_path' => $previousPhoto,
+            ]);
+        }
+
+        return back()->with('success', 'El reporte técnico fue guardado correctamente.');
     }
 }

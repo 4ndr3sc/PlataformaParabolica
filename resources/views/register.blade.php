@@ -25,6 +25,12 @@
             </a>
             <p class="text-slate-600 mt-2 italic">Crea tu cuenta para acceder a todos nuestros servicios digitales</p>
         </div>
+        @if (session('status'))
+            <div class="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">{{ session('status') }}</div>
+        @endif
+        @if ($errors->any())
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{{ $errors->first() }}</div>
+        @endif
 
         <form action="{{ url('/register') }}" method="POST" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             @csrf
