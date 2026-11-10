@@ -7,12 +7,27 @@ use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AccountServiceWorkflowsTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_customer_service_table_migration_repairs_tables_missing_from_a_deployed_database(): void
+    {
+        Schema::dropIfExists('service_requests');
+        Schema::dropIfExists('invoices');
+
+        $migration = require database_path('migrations/2026_11_09_000005_repair_missing_customer_service_tables.php');
+        $migration->up();
+
+        $this->assertTrue(Schema::hasTable('service_requests'));
+        $this->assertTrue(Schema::hasTable('invoices'));
+        $this->assertTrue(Schema::hasColumn('service_requests', 'service_key'));
+        $this->assertTrue(Schema::hasColumn('invoices', 'billing_period'));
+    }
 
     public function test_customer_can_select_a_plan_and_admin_generates_invoice_at_catalog_price(): void
     {
